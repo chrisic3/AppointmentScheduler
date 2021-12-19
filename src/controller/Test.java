@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -15,22 +14,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private PasswordField passwordField;
+public class Test implements Initializable {
+    public TextField usernameTest;
+    public TextField passwordTest;
 
-    public void OnSubmitLogin(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/test.fxml"));
-        Parent root = loader.load();
-
-        Test test = loader.getController();
-        test.receiveData(usernameField, passwordField);
-
+    public void onBackButton(ActionEvent actionEvent) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("../view/loginForm.fxml"));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
+        stage.setScene(new Scene((root)));
         stage.show();
+    }
+
+    public void receiveData(TextField usernameField, PasswordField passwordField) {
+        String user = usernameField.getText();
+        String pass = passwordField.getText();
+        usernameTest.setText(user);
+        passwordTest.setText(pass);
     }
 
     @Override
