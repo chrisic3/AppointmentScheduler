@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,20 +19,29 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     @FXML
+    private Label zoneIDLabel;
+    @FXML
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
 
     public void OnSubmitLogin(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/test.fxml"));
-        Parent root = loader.load();
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/test.fxml"));
+//        Parent root = loader.load();
+//
+//        Test test = loader.getController();
+//        test.receiveData(usernameField, passwordField);
+//
+//        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+//        stage.setScene(new Scene(root));
+//        stage.show();
+        if (!usernameField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
 
-        Test test = loader.getController();
-        test.receiveData(usernameField, passwordField);
-
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
+        } else {
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setContentText("Username and/or password cannot be empty.");
+            error.showAndWait();
+        }
     }
 
     @Override
