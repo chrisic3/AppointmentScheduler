@@ -5,9 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    private static final String databaseName = "client_schedule";
+    private static final String protocol = "jdbc";
+    private static final String vendorName = "mysql";
+    private static final String address = "localhost";
     private static final String port = "3306";
-    private static final String url = "jdbc:mysql://localhost:" + port + "/" + databaseName;
+    private static final String databaseName = "client_schedule";
+
+    private static final String url = protocol + ":" + vendorName + "://" + address + ":" + port + "/" + databaseName;
     private static final String username = "sqlUser";
     private static final String password = "Passw0rd!";
     private static Connection conn;
