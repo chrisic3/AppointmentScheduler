@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class UserDAO {
     public static User getUser(String username, String password) {
         User user = null;
+        String query = "SELECT * FROM users WHERE User_Name = '" + username + "' AND Password = '" + password + "'";
+
         try {
-            DBConnection.openConnection();
-            String query = "SELECT * FROM users WHERE User_Name = '" + username + "' AND Password = '" + password + "'";
             Query.makeQuery(query);
             ResultSet result = Query.getResult();
             while (result.next()) {
@@ -19,12 +19,6 @@ public class UserDAO {
                 String passwordResult = result.getString("Password");
                 user = new User(idResult, usernameResult, passwordResult);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            DBConnection.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -10,13 +10,25 @@ public class DBConnection {
     private static final String url = "jdbc:mysql://localhost:" + port + "/" + databaseName;
     private static final String username = "sqlUser";
     private static final String password = "Passw0rd!";
-    public static Connection conn;
+    private static Connection conn;
 
-    public static void openConnection() throws SQLException {
-        conn = (Connection) DriverManager.getConnection(url, username, password);
+    public static void openConnection() {
+        try {
+            conn = (Connection) DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void closeConnection() throws SQLException {
-        conn.close();
+    public static Connection getConnection() {
+        return conn;
+    }
+
+    public static void closeConnection() {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
