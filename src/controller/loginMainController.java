@@ -3,34 +3,45 @@ package controller;
 import dao.UserDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
 import model.User;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class loginMainController implements Initializable {
     @FXML
+    private Label usernameLabel;
+    @FXML
+    public Label passwordLabel;
+    @FXML
     private Label zoneIDLabel;
+    @FXML
+    private Label currentLabel;
+    @FXML
+    public Button loginButton;
     @FXML
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) { }
+    private ResourceBundle rb;
 
-    public void OnSubmitLogin(ActionEvent actionEvent) throws IOException {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.rb = resourceBundle;
+
+        usernameLabel.setText(rb.getString("username"));
+        passwordLabel.setText(rb.getString("password"));
+        loginButton.setText(rb.getString("login"));
+        currentLabel.setText(rb.getString("currentLocale"));
+        zoneIDLabel.setText(String.valueOf(Locale.getDefault()));
+    }
+
+    public void OnSubmitLogin(ActionEvent actionEvent) {
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/test.fxml"));
 //        Parent root = loader.load();
 //
@@ -50,12 +61,12 @@ public class loginMainController implements Initializable {
                 success.showAndWait();
             } else {
                 Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setContentText("User not found.");
+                error.setContentText(rb.getString("userNotFound"));
                 error.showAndWait();
             }
         } else {
             Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setContentText("Username and/or password cannot be empty.");
+            error.setContentText(rb.getString("invalidUserInput"));
             error.showAndWait();
         }
     }
