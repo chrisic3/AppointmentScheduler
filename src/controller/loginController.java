@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 /**
  * Controls the login window functionality
  */
-public class loginMainController implements Initializable {
+public class loginController implements Initializable {
     // Form elements
     @FXML
     private Label usernameLabel;

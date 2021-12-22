@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.loginMainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.loginController">
    <children>
       <Label fx:id="usernameLabel" alignment="CENTER_RIGHT" layoutX="27.0" layoutY="95.0" minWidth="95.0" text="Username:" />
       <Label fx:id="passwordLabel" alignment="CENTER_RIGHT" layoutX="47.0" layoutY="132.0" minWidth="75.0" text="Password:" />
