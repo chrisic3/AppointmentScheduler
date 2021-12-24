@@ -1,3 +1,4 @@
+import controller.loginController;
 import dao.DBConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -5,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -17,7 +19,7 @@ public class Main extends Application {
      * @param args Cmd line arguments
      */
     public static void main(String[] args) {
-        //Locale.setDefault(new Locale("fr", "FR"));
+        Locale.setDefault(new Locale("fr", "FR"));
         DBConnection.openConnection();
         launch(args);
         DBConnection.closeConnection();

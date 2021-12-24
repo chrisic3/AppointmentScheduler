@@ -3,19 +3,25 @@ package controller;
 import dao.UserDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import model.User;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Controls the login window functionality
+ * Controls the login screen functionality
  */
 public class loginController implements Initializable {
-    // Form elements
+    // Form element variables
     @FXML
     private Label usernameLabel;
     @FXML
@@ -34,6 +40,11 @@ public class loginController implements Initializable {
     // Class variables
     private ResourceBundle rb;
 
+    /**
+     * Initializes the language for the login screen
+     * @param url Not used
+     * @param resourceBundle The language resource bundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
@@ -46,32 +57,37 @@ public class loginController implements Initializable {
     }
 
     /**
-     * Submits the supplied login credentials for verification, prompts if error with input
+     * Submits the supplied login credentials for verification,
+     * loads menu screen if authenticated,
+     * provides error message if invalid input
      * @param actionEvent Login button clicked
      */
-    public void OnSubmitLogin(ActionEvent actionEvent) {
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/test.fxml"));
-//        Parent root = loader.load();
-//
-//        Test test = loader.getController();
-//        test.receiveData(usernameField, passwordField);
-//
-//        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-//        stage.setScene(new Scene(root));
-//        stage.show();
+    public void onLoginClick(ActionEvent actionEvent) {
         // Check that both fields have input
         if (!usernameField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
             // Get user from db
             User user = UserDAO.getUser(usernameField.getText(), passwordField.getText());
 
-            // TODO
+            // Load the menu screen or provide an error
             if (user != null) {
-                System.out.println("User id: " + user.getId() + "\nUsername: " + user.getUsername() + "\nPassword: " + user.getPassword());
-                Alert success = new Alert(Alert.AlertType.CONFIRMATION);
-                success.setContentText("User id: " + user.getId() + "\nUsername: " + user.getUsername() + "\nPassword: " + user.getPassword());
-                success.showAndWait();
+                // Load the menu screen
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/menuForm.fxml"));
+                    loader.setResources(rb);
+
+                    Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                    Scene scene = new Scene(loader.load());
+
+                    stage.setScene(scene);
+                    stage.setTitle("title");
+                    stage.show();
+
+                } catch (IOException e) {
+                    // If the fxml file is not found
+                    e.printStackTrace();
+                }
             } else {
-                // TODO
+                // Error message if user is not found in the db
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setContentText(rb.getString("userNotFound"));
                 error.showAndWait();
