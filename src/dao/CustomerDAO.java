@@ -43,4 +43,7 @@ public class CustomerDAO {
 
         Query.makeInsertQuery(query, 5, name, address, String.valueOf(division.getId()), zip, phone);
     }
+
+    public static void updateCustomer() {
+    }
 }

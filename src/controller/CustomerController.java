@@ -27,10 +27,11 @@ public class CustomerController implements Initializable {
     public TableColumn<Customer, String> customerDivisionColumn;
     public TableColumn<Customer, String> customerZipColumn;
     public TableColumn<Customer, String> customerPhoneColumn;
-    public Button addCustomerButton;
+    public Button saveCustomerButton;
     public Button updateCustomerButton;
     public Button deleteCustomerButton;
     public Button menuCustomerButton;
+    public Button customerClearButton;
     public TextField customerIdField;
     public TextField customerNameField;
     public TextField customerAddressField;
@@ -51,7 +52,7 @@ public class CustomerController implements Initializable {
         this.rb = resourceBundle;
 
         customerTableLabel.setText(rb.getString("customers"));
-        addCustomerButton.setText(rb.getString("add"));
+        saveCustomerButton.setText(rb.getString("add"));
         updateCustomerButton.setText(rb.getString("update"));
         deleteCustomerButton.setText(rb.getString("delete"));
         menuCustomerButton.setText(rb.getString("menu"));
@@ -80,7 +81,7 @@ public class CustomerController implements Initializable {
         customerCountryCombo.setItems(CountryDAO.getCountries());
     }
 
-    public void addCustomerClicked(ActionEvent actionEvent) {
+    public void saveCustomerClicked(ActionEvent actionEvent) {
         String id = customerIdField.getText();
         String name = customerNameField.getText();
         String address = customerAddressField.getText();
@@ -88,25 +89,34 @@ public class CustomerController implements Initializable {
         String zip = customerZipField.getText();
         String phone = customerPhoneField.getText();
 
-        if (!id.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Cannot add a selected user. Try \"Update\" instead.");
-            alert.showAndWait();
-        } else if (division == null) {
+        if (division == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Fields cannot be empty.");
             alert.showAndWait();
-        } else {
+        } else if (id.isEmpty()){
             CustomerDAO.addCustomer(name, address, division, zip, phone);
+        } else {
+            CustomerDAO.updateCustomer();
         }
 
         customerTable.setItems(CustomerDAO.getCustomers());
+
+        customerIdField.clear();
+        customerNameField.clear();
+        customerAddressField.clear();
+        customerCountryCombo.getSelectionModel().clearSelection();
+        customerCountryCombo.setPromptText("Country");
+        customerDivisionCombo.getSelectionModel().clearSelection();
+        customerDivisionCombo.setPromptText("Division");
+        customerZipField.clear();
+        customerPhoneField.clear();
     }
 
     public void updateCustomerClicked(ActionEvent actionEvent) {
     }
 
     public void deleteCustomerClicked(ActionEvent actionEvent) {
+
     }
 
     public void menuCustomerClicked(ActionEvent actionEvent) {
@@ -116,5 +126,15 @@ public class CustomerController implements Initializable {
         int countryId = customerCountryCombo.getValue().getId();
 
         customerDivisionCombo.setItems(DivisionDAO.getDivisions(countryId));
+    }
+
+    public void onCustomerClear(ActionEvent actionEvent) {
+        customerIdField.clear();
+        customerNameField.clear();
+        customerAddressField.clear();
+        customerCountryCombo.getSelectionModel().clearSelection();
+        customerDivisionCombo.getSelectionModel().clearSelection();
+        customerZipField.clear();
+        customerPhoneField.clear();
     }
 }
