@@ -4,6 +4,7 @@ import dao.CountryDAO;
 import dao.CustomerDAO;
 import dao.DivisionDAO;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -24,32 +25,53 @@ import java.util.ResourceBundle;
  * Controls the customers form
  */
 public class CustomerController implements Initializable {
+    // Customer form variables
+    @FXML
+    private Label customerTableLabel;
+    @FXML
+    private TableView<Customer> customerTable;
+    @FXML
+    private TableColumn<Customer, Integer> customerIdColumn;
+    @FXML
+    private TableColumn<Customer, String> customerNameColumn;
+    @FXML
+    private TableColumn<Customer, String> customerAddressColumn;
+    @FXML
+    private TableColumn<Customer, String> customerDivisionColumn;
+    @FXML
+    private TableColumn<Customer, String> customerZipColumn;
+    @FXML
+    private TableColumn<Customer, String> customerPhoneColumn;
+    @FXML
+    private Button saveCustomerButton;
+    @FXML
+    private Button updateCustomerButton;
+    @FXML
+    private Button deleteCustomerButton;
+    @FXML
+    private Button menuCustomerButton;
+    @FXML
+    private Button customerClearButton;
+    @FXML
+    private TextField customerIdField;
+    @FXML
+    private TextField customerNameField;
+    @FXML
+    private TextField customerAddressField;
+    @FXML
+    private ComboBox<Country> customerCountryCombo;
+    @FXML
+    private ComboBox<Division> customerDivisionCombo;
+    @FXML
+    private TextField customerZipField;
+    @FXML
+    private TextField customerPhoneField;
 
-    public Label customerTableLabel;
-    public TableView<Customer> customerTable;
-    public TableColumn<Customer, Integer> customerIdColumn;
-    public TableColumn<Customer, String> customerNameColumn;
-    public TableColumn<Customer, String> customerAddressColumn;
-    public TableColumn<Customer, String> customerDivisionColumn;
-    public TableColumn<Customer, String> customerZipColumn;
-    public TableColumn<Customer, String> customerPhoneColumn;
-    public Button saveCustomerButton;
-    public Button updateCustomerButton;
-    public Button deleteCustomerButton;
-    public Button menuCustomerButton;
-    public Button customerClearButton;
-    public TextField customerIdField;
-    public TextField customerNameField;
-    public TextField customerAddressField;
-    public ComboBox<Country> customerCountryCombo;
-    public ComboBox<Division> customerDivisionCombo;
-    public TextField customerZipField;
-    public TextField customerPhoneField;
-
+    // Class variables
     private ResourceBundle rb;
 
     /**
-     * Initialize the language for the customer form
+     * Initialize the language for the customer form and sets the table and country combobox
      * @param url Not used
      * @param resourceBundle Language resource bundle
      */
@@ -57,8 +79,9 @@ public class CustomerController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
 
+        // Language
         customerTableLabel.setText(rb.getString("customers"));
-        saveCustomerButton.setText(rb.getString("add"));
+        saveCustomerButton.setText(rb.getString("save"));
         updateCustomerButton.setText(rb.getString("update"));
         deleteCustomerButton.setText(rb.getString("delete"));
         menuCustomerButton.setText(rb.getString("menu"));
@@ -75,8 +98,10 @@ public class CustomerController implements Initializable {
         customerZipField.setPromptText(rb.getString("zip"));
         customerPhoneField.setPromptText(rb.getString("phone"));
 
+        // Set table
         customerTable.setItems(CustomerDAO.getCustomers());
 
+        // Set table columns
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -84,10 +109,16 @@ public class CustomerController implements Initializable {
         customerZipColumn.setCellValueFactory(new PropertyValueFactory<>("zip"));
         customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
+        // Set country box
         customerCountryCombo.setItems(CountryDAO.getCountries());
     }
 
+    /**
+     * Adds a customer to the db if the id is empty, otherwise updates the selected customer
+     * @param actionEvent Not used
+     */
     public void saveCustomerClicked(ActionEvent actionEvent) {
+        // Get input from fields/boxes
         String id = customerIdField.getText();
         String name = customerNameField.getText();
         String address = customerAddressField.getText();
@@ -96,18 +127,23 @@ public class CustomerController implements Initializable {
         String phone = customerPhoneField.getText();
 
         if (division == null) {
+            // Error if division is empty (quick and dirty validation)
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Fields cannot be empty.");
             alert.showAndWait();
         } else if (id.isEmpty()){
+            // Add new customer
             CustomerDAO.addCustomer(name, address, division, zip, phone);
         } else {
+            // Update selected customer
             Customer customer = new Customer(Integer.parseInt(id), name, address, division, zip, phone);
             CustomerDAO.updateCustomer(customer);
         }
 
+        // Update table to reflect changes
         customerTable.setItems(CustomerDAO.getCustomers());
 
+        // Clear all fields/boxes
         customerIdField.clear();
         customerNameField.clear();
         customerAddressField.clear();
@@ -119,14 +155,21 @@ public class CustomerController implements Initializable {
         customerPhoneField.clear();
     }
 
+    /**
+     * Displays the selected customer information in the fields/boxes for editing
+     * @param actionEvent Not used
+     */
     public void updateCustomerClicked(ActionEvent actionEvent) {
+        // Get selected customer
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
 
         if (customer == null) {
+            // Error if no selection
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Select a customer from the list first.");
             alert.showAndWait();
         } else {
+            // Populate fields/boxes
             customerIdField.setText(String.valueOf(customer.getId()));
             customerNameField.setText(customer.getName());
             customerAddressField.setText(customer.getAddress());
@@ -137,28 +180,51 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Delets a customer from the db
+     * @param actionEvent Not used
+     */
     public void deleteCustomerClicked(ActionEvent actionEvent) {
+        // Get selected customer
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
 
-        if (customer != null)
-        {
+        if (customer != null) {
+            // Confirm deletion
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete this customer?");
             Optional<ButtonType> choice = alert.showAndWait();
-            if (choice.isPresent() && choice.get().equals(ButtonType.OK))
-            {
+            if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
                CustomerDAO.deleteCustomer(customer);
             }
         }
-        else // Display error if no selection
-        {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Please select a customer to delete.");
-            alert.showAndWait();
+        else {
+        // Display error if no selection
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("Please select a customer to delete.");
+        alert.showAndWait();
         }
 
+        // Update table to reflect deletion
         customerTable.setItems(CustomerDAO.getCustomers());
     }
 
+    /**
+     * Clears the input fields/boxes
+     * @param actionEvent Not used
+     */
+    public void onCustomerClear(ActionEvent actionEvent) {
+        customerIdField.clear();
+        customerNameField.clear();
+        customerAddressField.clear();
+        customerCountryCombo.getSelectionModel().clearSelection();
+        customerDivisionCombo.getSelectionModel().clearSelection();
+        customerZipField.clear();
+        customerPhoneField.clear();
+    }
+
+    /**
+     * Takes the user back to the main menu
+     * @param actionEvent Not used
+     */
     public void menuCustomerClicked(ActionEvent actionEvent) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
@@ -177,19 +243,13 @@ public class CustomerController implements Initializable {
         }
     }
 
+    /**
+     * Sets the division box based on the id of the country
+     * @param actionEvent Not used
+     */
     public void onCountryCombo(ActionEvent actionEvent) {
         int countryId = customerCountryCombo.getValue().getId();
 
         customerDivisionCombo.setItems(DivisionDAO.getDivisions(countryId));
-    }
-
-    public void onCustomerClear(ActionEvent actionEvent) {
-        customerIdField.clear();
-        customerNameField.clear();
-        customerAddressField.clear();
-        customerCountryCombo.getSelectionModel().clearSelection();
-        customerDivisionCombo.getSelectionModel().clearSelection();
-        customerZipField.clear();
-        customerPhoneField.clear();
     }
 }

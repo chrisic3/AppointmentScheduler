@@ -9,9 +9,14 @@ import model.Division;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Static class used for Customer db access
+ */
 public class CustomerDAO {
-//    private static
-
+    /**
+     * Gets all customers from the db
+     * @return Returns an observable list of Customers
+     */
     public static ObservableList<Customer> getCustomers() {
         String query = "SELECT c.Customer_ID, c.Customer_Name, c.Address, C.Postal_Code, c.Phone, d.Division_ID, " +
                 "d.Division, d.Country_ID, co.Country FROM customers AS c LEFT JOIN first_level_divisions AS d ON " +
@@ -34,12 +39,21 @@ public class CustomerDAO {
                 customers.add(new Customer(id, name, address, division, zip, phone));
             }
         } catch (SQLException e) {
+            // Db error
             e.printStackTrace();
         }
 
         return customers;
     }
 
+    /**
+     * Adds a customer to the db
+     * @param name The customer name
+     * @param address The customer address
+     * @param division The customer division
+     * @param zip The customer zip
+     * @param phone The customer phone
+     */
     public static void addCustomer(String name, String address, Division division, String zip, String phone) {
         String query = "INSERT INTO customers (Customer_Name, Address, Division_ID, Postal_Code, Phone) " +
                 "VALUES(?, ?, ?, ?, ?)";
@@ -47,6 +61,10 @@ public class CustomerDAO {
         Query.makeInsertQuery(query, 5, name, address, String.valueOf(division.getId()), zip, phone);
     }
 
+    /**
+     * Updates a customer in the db
+     * @param customer The customer to update
+     */
     public static void updateCustomer(Customer customer) {
         String query = "UPDATE customers SET Customer_Name = ?, Address = ?, Division_ID = ?, Postal_Code = ?, " +
                 "Phone = ? WHERE Customer_ID = ?";
@@ -56,6 +74,10 @@ public class CustomerDAO {
                 String.valueOf(customer.getId()));
     }
 
+    /**
+     * Deletes a customer from the db
+     * @param customer The customer to delete
+     */
     public static void deleteCustomer(Customer customer) {
         String query = "DELETE FROM customers WHERE Customer_ID = ?";
 

@@ -7,11 +7,17 @@ import model.Country;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Static class used for Country db access
+ */
 public class CountryDAO {
-    private static ObservableList<Country> countries = FXCollections.observableArrayList();
-
+    /**
+     * Gets all countries from db
+     * @return Returns an observable list of Countries
+     */
     public static ObservableList<Country> getCountries() {
         String query = "SELECT Country_ID, Country FROM countries";
+        ObservableList<Country> countries = FXCollections.observableArrayList();
 
         try {
             Query.makeSelectQuery(query, 0);
@@ -23,6 +29,7 @@ public class CountryDAO {
                 countries.add(new Country(id, country));
             }
         } catch (SQLException e) {
+            // Db error
             e.printStackTrace();
         }
         return countries;
