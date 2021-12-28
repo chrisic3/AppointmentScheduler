@@ -1,5 +1,6 @@
 package dao;
 
+import model.Customer;
 import model.Division;
 
 import java.sql.PreparedStatement;
@@ -50,6 +51,17 @@ public class Query {
             ps.execute();
 
             result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void makeDeleteQuery(String query, Customer customer) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query);
+            ps.setInt(1, customer.getId());
+
+            ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -46,4 +46,10 @@ public class CustomerDAO {
 
     public static void updateCustomer() {
     }
+
+    public static void deleteCustomer(Customer customer) {
+        String query = "DELETE FROM customers WHERE Customer_ID = ?";
+
+        Query.makeDeleteQuery(query, customer);
+    }
 }

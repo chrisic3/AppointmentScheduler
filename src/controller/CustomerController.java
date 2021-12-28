@@ -12,6 +12,7 @@ import model.Customer;
 import model.Division;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -116,7 +117,25 @@ public class CustomerController implements Initializable {
     }
 
     public void deleteCustomerClicked(ActionEvent actionEvent) {
+        Customer customer = customerTable.getSelectionModel().getSelectedItem();
 
+        if (customer != null)
+        {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete this customer?");
+            Optional<ButtonType> choice = alert.showAndWait();
+            if (choice.isPresent() && choice.get().equals(ButtonType.OK))
+            {
+               CustomerDAO.deleteCustomer(customer);
+            }
+        }
+        else // Display error if no selection
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Please select a customer to delete.");
+            alert.showAndWait();
+        }
+
+        customerTable.setItems(CustomerDAO.getCustomers());
     }
 
     public void menuCustomerClicked(ActionEvent actionEvent) {
