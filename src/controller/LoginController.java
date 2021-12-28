@@ -78,7 +78,7 @@ public class LoginController implements Initializable {
                     Scene scene = new Scene(loader.load());
 
                     stage.setScene(scene);
-                    stage.setTitle("title");
+                    stage.setTitle(rb.getString("title"));
                     stage.show();
 
                 } catch (IOException e) {

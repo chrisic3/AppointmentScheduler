@@ -7,11 +7,11 @@ public class Customer {
     private int id;
     private String name;
     private String address;
-    private String division;
+    private Division division;
     private String zip;
     private String phone;
 
-    public Customer(int id, String name, String address, String division, String zip, String phone) {
+    public Customer(int id, String name, String address, Division division, String zip, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -44,11 +44,11 @@ public class Customer {
         this.address = address;
     }
 
-    public String getDivision() {
+    public Division getDivision() {
         return division;
     }
 
-    public void setDivision(String division) {
+    public void setDivision(Division division) {
         this.division = division;
     }
 

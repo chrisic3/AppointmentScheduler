@@ -4,13 +4,18 @@ import dao.CountryDAO;
 import dao.CustomerDAO;
 import dao.DivisionDAO;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import model.Country;
 import model.Customer;
 import model.Division;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -97,7 +102,8 @@ public class CustomerController implements Initializable {
         } else if (id.isEmpty()){
             CustomerDAO.addCustomer(name, address, division, zip, phone);
         } else {
-            CustomerDAO.updateCustomer();
+            Customer customer = new Customer(Integer.parseInt(id), name, address, division, zip, phone);
+            CustomerDAO.updateCustomer(customer);
         }
 
         customerTable.setItems(CustomerDAO.getCustomers());
@@ -114,6 +120,21 @@ public class CustomerController implements Initializable {
     }
 
     public void updateCustomerClicked(ActionEvent actionEvent) {
+        Customer customer = customerTable.getSelectionModel().getSelectedItem();
+
+        if (customer == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Select a customer from the list first.");
+            alert.showAndWait();
+        } else {
+            customerIdField.setText(String.valueOf(customer.getId()));
+            customerNameField.setText(customer.getName());
+            customerAddressField.setText(customer.getAddress());
+            customerCountryCombo.setValue(customer.getDivision().getCountry());
+            customerDivisionCombo.setValue(customer.getDivision());
+            customerZipField.setText(customer.getZip());
+            customerPhoneField.setText(customer.getPhone());
+        }
     }
 
     public void deleteCustomerClicked(ActionEvent actionEvent) {
@@ -139,6 +160,21 @@ public class CustomerController implements Initializable {
     }
 
     public void menuCustomerClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
+            loader.setResources(rb);
+
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+            stage.setTitle(rb.getString("title"));
+            stage.show();
+
+        } catch (IOException e) {
+            // If the fxml file is not found
+            e.printStackTrace();
+        }
     }
 
     public void onCountryCombo(ActionEvent actionEvent) {

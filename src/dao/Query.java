@@ -66,4 +66,19 @@ public class Query {
             e.printStackTrace();
         }
     }
+
+    public static void makeUpdateQuery(String query, int numParams, String... params) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0; i < numParams; i++) {
+                ps.setString(i + 1, params[i]);
+            }
+
+            ps.execute();
+
+            result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
