@@ -1,8 +1,11 @@
 package dao;
 
+import model.Division;
+
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * Static class for running a query and storing the result
@@ -14,10 +17,15 @@ public class Query {
      * Takes a query string, creates a statement, and stores the result
      * @param query The provided query to run
      */
-    public static void makeQuery(String query) {
+    public static void makeSelectQuery(String query, int numParams, String... params) {
         try {
-            Statement statement = DBConnection.getConnection().createStatement();
-            result = statement.executeQuery(query);
+
+            PreparedStatement statement = DBConnection.getConnection().prepareStatement(query);
+            for (int i = 0; i < numParams; i++) {
+                statement.setString(i + 1, params[i]);
+            }
+
+            result = statement.executeQuery();
         } catch (SQLException e) {
             // Db error
             e.printStackTrace();
@@ -30,5 +38,20 @@ public class Query {
      */
     public static ResultSet getResult() {
         return result;
+    }
+
+    public static void makeInsertQuery(String query, int numParams, String... params) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            for (int i = 0; i < numParams; i++) {
+                ps.setString(i+ 1, params[i]);
+            }
+
+            ps.execute();
+
+            result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

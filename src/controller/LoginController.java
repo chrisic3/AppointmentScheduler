@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -20,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Controls the login screen functionality
  */
-public class loginController implements Initializable {
+public class LoginController implements Initializable {
     // Form element variables
     @FXML
     private Label usernameLabel;
@@ -72,7 +71,7 @@ public class loginController implements Initializable {
             if (user != null) {
                 // Load the menu screen
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/menuForm.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
                     loader.setResources(rb);
 
                     Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

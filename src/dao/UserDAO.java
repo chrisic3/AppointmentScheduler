@@ -12,23 +12,23 @@ public class UserDAO {
     /**
      * Runs a query to get the user with the corresponding username and password and Creates a User
      * object based on the results
-     * @param username The username to match in the db
-     * @param password The password to match in the db
+     * @param usernameInput The username to match in the db
+     * @param passwordInput The password to match in the db
      * @return Returns a user object if found, otherwise returns null
      */
-    public static User getUser(String username, String password) {
-        String query = "SELECT * FROM users WHERE User_Name = '" + username + "' AND Password = '" + password + "'";
+    public static User getUser(String usernameInput, String passwordInput) {
+        String query = "SELECT User_ID, User_Name, Password FROM users WHERE User_Name = ? AND Password = ?";
 
         try {
-            Query.makeQuery(query);
-            ResultSet result = Query.getResult();
-            while (result.next()) {
-                int idResult = result.getInt("User_ID");
-                String usernameResult = result.getString("User_Name");
-                String passwordResult = result.getString("Password");
-                User user = new User(idResult, usernameResult, passwordResult);
-                return user;
-            }
+            Query.makeSelectQuery(query, 2, usernameInput, passwordInput);
+            ResultSet rs = Query.getResult();
+
+            rs.next();
+
+            int id = rs.getInt("User_ID");
+            String username = rs.getString("User_Name");
+            String password = rs.getString("Password");
+            return new User(id, username, password);
         } catch (SQLException e) {
             // Db error
             e.printStackTrace();

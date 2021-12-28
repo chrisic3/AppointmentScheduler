@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerController">
+   <center>
+      <Group BorderPane.alignment="CENTER">
+         <children>
+            <GridPane layoutX="-3.0" layoutY="8.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="25.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="25.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="25.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label fx:id="customerTableLabel" text="Customers" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="customerTable" prefHeight="235.0" prefWidth="550.0" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                    <columns>
+                      <TableColumn fx:id="customerIdColumn" prefWidth="26.0" text="ID" />
+                      <TableColumn fx:id="customerNameColumn" prefWidth="120.0" text="Name" />
+                        <TableColumn fx:id="customerAddressColumn" prefWidth="119.0" text="Address" />
+                        <TableColumn fx:id="customerDivisionColumn" prefWidth="87.0" text="Division" />
+                        <TableColumn fx:id="customerZipColumn" prefWidth="51.0" text="Zip" />
+                        <TableColumn fx:id="customerPhoneColumn" prefWidth="105.0" text="Phone" />
+                    </columns>
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </TableView>
+                  <Button fx:id="addCustomerButton" mnemonicParsing="false" onAction="#addCustomerClicked" text="Add" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button fx:id="updateCustomerButton" mnemonicParsing="false" onAction="#updateCustomerClicked" text="Update" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button fx:id="deleteCustomerButton" mnemonicParsing="false" onAction="#deleteCustomerClicked" text="Delete" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button fx:id="menuCustomerButton" mnemonicParsing="false" onAction="#menuCustomerClicked" text="Menu" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                     <children>
+                        <TextField fx:id="customerIdField" disable="true" editable="false" promptText="ID" />
+                        <TextField fx:id="customerNameField" promptText="Name" />
+                        <TextField fx:id="customerAddressField" promptText="Address" />
+                        <ComboBox fx:id="customerCountryCombo" onAction="#onCountryCombo" prefWidth="150.0" promptText="Country" />
+                        <ComboBox fx:id="customerDivisionCombo" prefWidth="150.0" promptText="Division" />
+                        <TextField fx:id="customerZipField" promptText="Postal Code" />
+                        <TextField fx:id="customerPhoneField" promptText="Phone" />
+                     </children>
+                  </VBox>
+               </children>
+            </GridPane>
+         </children>
+      </Group>
+   </center>
+   <right>
+      <Group BorderPane.alignment="CENTER" />
+   </right>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>
