@@ -84,6 +84,7 @@ public class CustomerController implements Initializable {
         saveCustomerButton.setText(rb.getString("save"));
         updateCustomerButton.setText(rb.getString("update"));
         deleteCustomerButton.setText(rb.getString("delete"));
+        customerClearButton.setText(rb.getString("clear"));
         menuCustomerButton.setText(rb.getString("menu"));
         customerIdColumn.setText(rb.getString("id"));
         customerNameColumn.setText(rb.getString("name"));
@@ -129,7 +130,7 @@ public class CustomerController implements Initializable {
         if (division == null) {
             // Error if division is empty (quick and dirty validation)
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Fields cannot be empty.");
+            alert.setContentText(rb.getString("emptyField"));
             alert.showAndWait();
         } else if (id.isEmpty()){
             // Add new customer
@@ -148,9 +149,7 @@ public class CustomerController implements Initializable {
         customerNameField.clear();
         customerAddressField.clear();
         customerCountryCombo.getSelectionModel().clearSelection();
-        customerCountryCombo.setPromptText("Country");
         customerDivisionCombo.getSelectionModel().clearSelection();
-        customerDivisionCombo.setPromptText("Division");
         customerZipField.clear();
         customerPhoneField.clear();
     }
@@ -166,7 +165,7 @@ public class CustomerController implements Initializable {
         if (customer == null) {
             // Error if no selection
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Select a customer from the list first.");
+            alert.setContentText(rb.getString("noSelection"));
             alert.showAndWait();
         } else {
             // Populate fields/boxes
@@ -181,7 +180,7 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Delets a customer from the db
+     * Deletes a customer from the db
      * @param actionEvent Not used
      */
     public void deleteCustomerClicked(ActionEvent actionEvent) {
@@ -190,7 +189,7 @@ public class CustomerController implements Initializable {
 
         if (customer != null) {
             // Confirm deletion
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete this customer?");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteConfirm"));
             Optional<ButtonType> choice = alert.showAndWait();
             if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
                CustomerDAO.deleteCustomer(customer);
@@ -199,7 +198,7 @@ public class CustomerController implements Initializable {
         else {
         // Display error if no selection
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("Please select a customer to delete.");
+        alert.setContentText(rb.getString("noSelection"));
         alert.showAndWait();
         }
 
