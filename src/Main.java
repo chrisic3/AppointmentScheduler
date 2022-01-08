@@ -45,6 +45,7 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.setTitle(rb.getString("title"));
             primaryStage.show();
+            primaryStage.centerOnScreen();
         } catch (IOException e) {
             // If the fxml file is not found
             e.printStackTrace();

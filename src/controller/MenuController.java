@@ -57,12 +57,27 @@ public class MenuController implements Initializable {
             stage.setScene(scene);
             stage.setTitle(rb.getString("title"));
             stage.show();
+            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void onAppointmentsClick(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/AppointmentForm.fxml"));
+            loader.setResources(rb);
+
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+            stage.setTitle(rb.getString("title"));
+            stage.show();
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onReportsClick(ActionEvent actionEvent) {

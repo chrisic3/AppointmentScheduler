@@ -80,7 +80,7 @@ public class LoginController implements Initializable {
                     stage.setScene(scene);
                     stage.setTitle(rb.getString("title"));
                     stage.show();
-
+                    stage.centerOnScreen();
                 } catch (IOException e) {
                     // If the fxml file is not found
                     e.printStackTrace();
