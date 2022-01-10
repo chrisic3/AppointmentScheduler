@@ -1,14 +1,25 @@
 package controller;
 
 import dao.AppointmentDAO;
+import dao.ContactDAO;
+import dao.CustomerDAO;
+import dao.UserDAO;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.Appointment;
+import javafx.stage.Stage;
+import model.*;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AppointmentController implements Initializable {
@@ -31,12 +42,12 @@ public class AppointmentController implements Initializable {
     public TextField apptLocationField;
     public DatePicker apptStartDate;
     public DatePicker apptEndDate;
-    public ComboBox apptContactCombo;
-    public ComboBox apptTypeCombo;
-    public ComboBox apptStartTimeCombo;
-    public ComboBox apptEndTimeCombo;
-    public ComboBox apptCustomerCombo;
-    public ComboBox apptUserCombo;
+    public ComboBox<Contact> apptContactCombo;
+    public ComboBox<String> apptTypeCombo;
+    public ComboBox<LocalTime> apptStartTimeCombo;
+    public ComboBox<LocalTime> apptEndTimeCombo;
+    public ComboBox<Customer> apptCustomerCombo;
+    public ComboBox<User> apptUserCombo;
     public Button saveApptButton;
     public Button updateApptButton;
     public Button deleteApptButton;
@@ -48,6 +59,7 @@ public class AppointmentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.rb = resourceBundle;
 
         // Set table
         apptTable.setItems(AppointmentDAO.getAppointments());
@@ -63,44 +75,149 @@ public class AppointmentController implements Initializable {
         apptEndColumn.setCellValueFactory(new PropertyValueFactory<>("end"));
         apptCustomerColumn.setCellValueFactory(new PropertyValueFactory<>("customer"));
         apptUserColumn.setCellValueFactory(new PropertyValueFactory<>("user"));
-    }
 
-    public void onApptContactCombo(ActionEvent actionEvent) {
-    }
+        // Set combo boxes
+        apptContactCombo.setItems(ContactDAO.getContacts());
+        apptTypeCombo.setItems(Appointment.getTypes());
+        apptCustomerCombo.setItems(CustomerDAO.getCustomers());
+        apptUserCombo.setItems(UserDAO.getUsers());
 
-    public void onApptTypeCombo(ActionEvent actionEvent) {
-    }
-
-    public void onAptStartDate(ActionEvent actionEvent) {
-    }
-
-    public void onApptStartTimeCombo(ActionEvent actionEvent) {
-    }
-
-    public void onApptEndDate(ActionEvent actionEvent) {
-    }
-
-    public void onApptEndTimeCombo(ActionEvent actionEvent) {
-    }
-
-    public void onApptCustomerCombo(ActionEvent actionEvent) {
-    }
-
-    public void onApptUserCombo(ActionEvent actionEvent) {
+        LocalTime start = Appointment.getOpen();
+        LocalTime end = Appointment.getClose();
+        while (start.isBefore(end.plusSeconds(1))) {
+            apptStartTimeCombo.getItems().add(start);
+            apptEndTimeCombo.getItems().add(start);
+            start = start.plusHours(1);
+        }
     }
 
     public void saveApptClicked(ActionEvent actionEvent) {
+        // Get input from fields/boxes
+        String id = apptIdField.getText();
+        String title = apptTitleField.getText();
+        String description = apptDescField.getText();
+        String location = apptLocationField.getText();
+        Contact contact = apptContactCombo.getValue();
+        String type = apptTypeCombo.getValue();
+        LocalDateTime start = LocalDateTime.of(apptStartDate.getValue(), apptStartTimeCombo.getValue());
+        LocalDateTime end = LocalDateTime.of(apptEndDate.getValue(), apptEndTimeCombo.getValue());
+        Customer customer = apptCustomerCombo.getValue();
+        User user = apptUserCombo.getValue();
+
+
+
+        if (contact == null) {
+            // Error if contact is empty (quick and dirty validation)
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(rb.getString("emptyField"));
+            alert.showAndWait();
+        } else if (id.isEmpty()){
+            // Add new appointment
+            Appointment appointment = new Appointment(-1, title, description, location, contact, type, start, end, customer, user);
+            AppointmentDAO.addAppointment(appointment);
+        } else {
+            // Update selected appointment
+            Appointment appointment = new Appointment(Integer.parseInt(id), title, description, location, contact, type, start, end, customer, user);
+            AppointmentDAO.updateAppointment(appointment);
+        }
+
+        // Update table to reflect changes
+        apptTable.setItems(AppointmentDAO.getAppointments());
+
+        // Clear all fields/boxes
+        apptIdField.clear();
+        apptTitleField.clear();
+        apptDescField.clear();
+        apptLocationField.clear();
+        apptStartDate.setValue(null);
+        apptEndDate.setValue(null);
+        apptContactCombo.setValue(null);
+        apptTypeCombo.setValue(null);
+        apptStartTimeCombo.setValue(null);
+        apptEndTimeCombo.setValue(null);
+        apptCustomerCombo.setValue(null);
+        apptUserCombo.setValue(null);
     }
 
     public void updateApptClicked(ActionEvent actionEvent) {
+        // Get selected appointment
+        Appointment appointment = apptTable.getSelectionModel().getSelectedItem();
+
+        if (appointment == null) {
+            // Error if no selection
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(rb.getString("noSelection"));
+            alert.showAndWait();
+        } else {
+            // Populate fields/boxes
+            apptIdField.setText(String.valueOf(appointment.getId()));
+            apptTitleField.setText(appointment.getTitle());
+            apptDescField.setText(appointment.getDescription());
+            apptLocationField.setText(appointment.getLocation());
+            apptContactCombo.setValue(appointment.getContact());
+            apptTypeCombo.setValue(appointment.getType());
+            apptStartDate.setValue(appointment.getStart().toLocalDate());
+            apptStartTimeCombo.setValue(appointment.getStart().toLocalTime());
+            apptEndDate.setValue(appointment.getEnd().toLocalDate());
+            apptEndTimeCombo.setValue(appointment.getEnd().toLocalTime());
+            apptCustomerCombo.setValue(appointment.getCustomer());
+            apptUserCombo.setValue(appointment.getUser());
+        }
     }
 
     public void clearApptClicked(ActionEvent actionEvent) {
+        apptIdField.clear();
+        apptTitleField.clear();
+        apptDescField.clear();
+        apptLocationField.clear();
+        apptStartDate.setValue(null);
+        apptEndDate.setValue(null);
+        apptContactCombo.setValue(null);
+        apptTypeCombo.setValue(null);
+        apptStartTimeCombo.setValue(null);
+        apptEndTimeCombo.setValue(null);
+        apptCustomerCombo.setValue(null);
+        apptUserCombo.setValue(null);
     }
 
     public void deleteApptClicked(ActionEvent actionEvent) {
+        // Get selected appointment
+        Appointment appointment  = apptTable.getSelectionModel().getSelectedItem();
+
+        if (appointment != null) {
+            // Confirm deletion
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteConfirm"));
+            Optional<ButtonType> choice = alert.showAndWait();
+            if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
+                AppointmentDAO.deleteAppointment(appointment);
+            }
+        }
+        else {
+            // Display error if no selection
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(rb.getString("noSelection"));
+            alert.showAndWait();
+        }
+
+        // Update table to reflect deletion
+        apptTable.setItems(AppointmentDAO.getAppointments());
     }
 
     public void menuApptClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
+            loader.setResources(rb);
+
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+            stage.setTitle(rb.getString("title"));
+            stage.show();
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            // If the fxml file is not found
+            e.printStackTrace();
+        }
     }
 }

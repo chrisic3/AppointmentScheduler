@@ -6,6 +6,7 @@ import model.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.TimeZone;
@@ -44,5 +45,33 @@ public class AppointmentDAO {
         }
 
         return appointments;
+    }
+
+    public static void addAppointment(Appointment appointment) {
+        String query = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        Query.insertAppointment(query, appointment);
+        ResultSet rs = Query.getResult();
+
+        try {
+            rs.next();
+            appointment.setId(rs.getInt(0));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateAppointment(Appointment appointment) {
+        String query = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
+                "Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
+
+        Query.updateAppointment(query, appointment);
+    }
+
+    public static void deleteAppointment(Appointment appointment) {
+        String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
+
+        Query.makeDeleteQuery(query, appointment.getId());
     }
 }

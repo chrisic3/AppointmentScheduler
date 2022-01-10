@@ -92,14 +92,14 @@
                         <TextField fx:id="apptTitleField" promptText="Title" />
                         <TextField fx:id="apptDescField" promptText="Description" />
                         <TextField fx:id="apptLocationField" promptText="Location" />
-                        <ComboBox fx:id="apptContactCombo" onAction="#onApptContactCombo" prefWidth="150.0" promptText="Contact" />
-                        <ComboBox fx:id="apptTypeCombo" onAction="#onApptTypeCombo" prefWidth="150.0" promptText="Type" />
-                        <DatePicker fx:id="apptStartDate" onAction="#onAptStartDate" promptText="Start Date" />
-                        <ComboBox fx:id="apptStartTimeCombo" onAction="#onApptStartTimeCombo" prefWidth="150.0" promptText="Start Time" />
-                        <DatePicker fx:id="apptEndDate" onAction="#onApptEndDate" promptText="End Date" />
-                        <ComboBox fx:id="apptEndTimeCombo" onAction="#onApptEndTimeCombo" prefWidth="150.0" promptText="End Time" />
-                        <ComboBox fx:id="apptCustomerCombo" onAction="#onApptCustomerCombo" prefWidth="150.0" promptText="Customer" />
-                        <ComboBox fx:id="apptUserCombo" onAction="#onApptUserCombo" prefWidth="150.0" promptText="User" />
+                        <ComboBox fx:id="apptContactCombo" prefWidth="150.0" promptText="Contact" />
+                        <ComboBox fx:id="apptTypeCombo" prefWidth="150.0" promptText="Type" />
+                        <DatePicker fx:id="apptStartDate" promptText="Start Date" />
+                        <ComboBox fx:id="apptStartTimeCombo" prefWidth="150.0" promptText="Start Time" />
+                        <DatePicker fx:id="apptEndDate" promptText="End Date" />
+                        <ComboBox fx:id="apptEndTimeCombo" prefWidth="150.0" promptText="End Time" />
+                        <ComboBox fx:id="apptCustomerCombo" prefWidth="150.0" promptText="Customer" />
+                        <ComboBox fx:id="apptUserCombo" prefWidth="150.0" promptText="User" />
                      </children>
                   </VBox>
                   <Button fx:id="clearApptButton" mnemonicParsing="false" onAction="#clearApptClicked" text="Clear" GridPane.columnIndex="7" GridPane.rowIndex="3">

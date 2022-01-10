@@ -1,6 +1,11 @@
 package model;
 
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Appointment {
     private int id;
@@ -13,6 +18,9 @@ public class Appointment {
     private LocalDateTime end;
     private Customer customer;
     private User user;
+
+    private final static LocalTime OPEN = LocalTime.of(8, 0);
+    private final static LocalTime CLOSE = LocalTime.of(22,0);
 
     public Appointment(int id, String title, String description, String location, Contact contact, String type, LocalDateTime start, LocalDateTime end, Customer customerId, User userId) {
         this.id = id;
@@ -105,5 +113,17 @@ public class Appointment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public static LocalTime getOpen() {
+        return OPEN;
+    }
+
+    public static LocalTime getClose() {
+        return CLOSE;
+    }
+
+    public static ObservableList<String> getTypes() {
+        return FXCollections.observableArrayList("First meeting", "Second meeting", "Third meeting");
     }
 }

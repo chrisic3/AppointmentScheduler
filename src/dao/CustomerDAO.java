@@ -83,11 +83,19 @@ public class CustomerDAO {
      * @param zip The customer zip
      * @param phone The customer phone
      */
-    public static void addCustomer(String name, String address, Division division, String zip, String phone) {
+    public static void addCustomer(Customer customer) {
         String query = "INSERT INTO customers (Customer_Name, Address, Division_ID, Postal_Code, Phone) " +
                 "VALUES(?, ?, ?, ?, ?)";
 
-        Query.makeInsertQuery(query, 5, name, address, String.valueOf(division.getId()), zip, phone);
+        Query.insertCustomer(query, customer);
+        ResultSet rs = Query.getResult();
+
+        try {
+            rs.next();
+            customer.setId(rs.getInt(1));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -98,9 +106,7 @@ public class CustomerDAO {
         String query = "UPDATE customers SET Customer_Name = ?, Address = ?, Division_ID = ?, Postal_Code = ?, " +
                 "Phone = ? WHERE Customer_ID = ?";
 
-        Query.makeUpdateQuery(query, 6, customer.getName(), customer.getAddress(),
-                String.valueOf(customer.getDivision().getId()), customer.getZip(), customer.getPhone(),
-                String.valueOf(customer.getId()));
+        Query.updateCustomer(query, customer);
     }
 
     /**
@@ -110,6 +116,6 @@ public class CustomerDAO {
     public static void deleteCustomer(Customer customer) {
         String query = "DELETE FROM customers WHERE Customer_ID = ?";
 
-        Query.makeDeleteQuery(query, customer);
+        Query.makeDeleteQuery(query, customer.getId());
     }
 }

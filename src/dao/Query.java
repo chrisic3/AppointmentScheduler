@@ -1,12 +1,13 @@
 package dao;
 
+import model.Appointment;
 import model.Customer;
 import model.Division;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * Static class for running a query and storing the result
@@ -44,39 +45,39 @@ public class Query {
         return result;
     }
 
-    /**
-     * Creates an insert prepared statement and stores the returned index
-     * @param query The query to run
-     * @param numParams The number of query parameters
-     * @param params The query parameters
-     */
-    public static void makeInsertQuery(String query, int numParams, String... params) {
-        try {
-            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            // Loop through params and add each to the correct place in the prepared statement
-            for (int i = 0; i < numParams; i++) {
-                // i + 1 because the prepared statement parameters start at 1
-                ps.setString(i+ 1, params[i]);
-            }
-
-            ps.execute();
-
-            result = ps.getGeneratedKeys();
-        } catch (SQLException e) {
-            // Db error
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * Creates an insert prepared statement and stores the returned index
+//     * @param query The query to run
+//     * @param numParams The number of query parameters
+//     * @param params The query parameters
+//     */
+//    public static void makeInsertQuery(String query, int numParams, String... params) {
+//        try {
+//            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+//            // Loop through params and add each to the correct place in the prepared statement
+//            for (int i = 0; i < numParams; i++) {
+//                // i + 1 because the prepared statement parameters start at 1
+//                ps.setString(i+ 1, params[i]);
+//            }
+//
+//            ps.execute();
+//
+//            result = ps.getGeneratedKeys();
+//        } catch (SQLException e) {
+//            // Db error
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Creates a delete prepared statement and executes
      * @param query The provided query to run
-     * @param customer The customer to delete
+     * @param id The id of the item to delete
      */
-    public static void makeDeleteQuery(String query, Customer customer) {
+    public static void makeDeleteQuery(String query, int id) {
         try {
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(query);
-            ps.setInt(1, customer.getId());
+            ps.setInt(1, id);
 
             ps.execute();
         } catch (SQLException e) {
@@ -85,26 +86,105 @@ public class Query {
         }
     }
 
-    /**
-     * Created an update prepared statement and stores the returned index
-     * @param query The provided query to run
-     * @param numParams The number of query parameters
-     * @param params The query parameters
-     */
-    public static void makeUpdateQuery(String query, int numParams, String... params) {
+//    /**
+//     * Created an update prepared statement and stores the returned index
+//     * @param query The provided query to run
+//     * @param numParams The number of query parameters
+//     * @param params The query parameters
+//     */
+//    public static void makeUpdateQuery(String query, int numParams, String... params) {
+//        try {
+//            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+//            // Loop through params and add each to the correct place in the prepared statement
+//            for (int i = 0; i < numParams; i++) {
+//                // i + 1 because the prepared statement parameters start at 1
+//                ps.setString(i + 1, params[i]);
+//            }
+//
+//            ps.execute();
+//
+//            result = ps.getGeneratedKeys();
+//        } catch (SQLException e) {
+//            // Db error
+//            e.printStackTrace();
+//        }
+//    }
+
+    public static void insertCustomer(String query, Customer customer) {
         try {
             PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            // Loop through params and add each to the correct place in the prepared statement
-            for (int i = 0; i < numParams; i++) {
-                // i + 1 because the prepared statement parameters start at 1
-                ps.setString(i + 1, params[i]);
-            }
+            ps.setString(1, customer.getName());
+            ps.setString(2, customer.getAddress());
+            ps.setInt(3, customer.getDivision().getId());
+            ps.setString(4, customer.getZip());
+            ps.setString(5, customer.getPhone());
+
+            ps.execute();
+
+            result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateCustomer(String query, Customer customer) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, customer.getName());
+            ps.setString(2, customer.getAddress());
+            ps.setInt(3, customer.getDivision().getId());
+            ps.setString(4, customer.getZip());
+            ps.setString(5, customer.getPhone());
+            ps.setInt(6, customer.getId());
 
             ps.execute();
 
             result = ps.getGeneratedKeys();
         } catch (SQLException e) {
             // Db error
+            e.printStackTrace();
+        }
+    }
+
+    public static void insertAppointment(String query, Appointment appointment) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, appointment.getTitle());
+            ps.setString(2, appointment.getDescription());
+            ps.setString(3, appointment.getLocation());
+            ps.setString(4, appointment.getType());
+            ps.setTimestamp(5, Timestamp.valueOf(appointment.getStart().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime()));
+            ps.setTimestamp(6, Timestamp.valueOf(appointment.getEnd().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime()));
+            ps.setInt(7, appointment.getCustomer().getId());
+            ps.setInt(8, appointment.getUser().getId());
+            ps.setInt(9, appointment.getContact().getId());
+
+            ps.execute();
+
+            result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateAppointment(String query, Appointment appointment) {
+        try {
+            PreparedStatement ps = DBConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, appointment.getTitle());
+            ps.setString(2, appointment.getDescription());
+            ps.setString(3, appointment.getLocation());
+            ps.setString(4, appointment.getType());
+            ps.setTimestamp(5, Timestamp.valueOf(appointment.getStart().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime()));
+            ps.setTimestamp(6, Timestamp.valueOf(appointment.getEnd().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime()));
+            ps.setInt(7, appointment.getCustomer().getId());
+            ps.setInt(8, appointment.getUser().getId());
+            ps.setInt(9, appointment.getContact().getId());
+            ps.setInt(10, appointment.getId());
+
+            ps.execute();
+
+            result = ps.getGeneratedKeys();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

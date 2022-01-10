@@ -134,7 +134,8 @@ public class CustomerController implements Initializable {
             alert.showAndWait();
         } else if (id.isEmpty()){
             // Add new customer
-            CustomerDAO.addCustomer(name, address, division, zip, phone);
+            Customer customer = new Customer(-1, name, address, division, zip, phone);
+            CustomerDAO.addCustomer(customer);
         } else {
             // Update selected customer
             Customer customer = new Customer(Integer.parseInt(id), name, address, division, zip, phone);
@@ -148,8 +149,9 @@ public class CustomerController implements Initializable {
         customerIdField.clear();
         customerNameField.clear();
         customerAddressField.clear();
-        customerCountryCombo.getSelectionModel().clearSelection();
-        customerDivisionCombo.getSelectionModel().clearSelection();
+        customerCountryCombo.setValue(null);
+        customerDivisionCombo.setValue(null);
+        customerDivisionCombo.setItems(null);
         customerZipField.clear();
         customerPhoneField.clear();
     }
@@ -214,8 +216,9 @@ public class CustomerController implements Initializable {
         customerIdField.clear();
         customerNameField.clear();
         customerAddressField.clear();
-        customerCountryCombo.getSelectionModel().clearSelection();
-        customerDivisionCombo.getSelectionModel().clearSelection();
+        customerCountryCombo.setValue(null);
+        customerDivisionCombo.setValue(null);
+        customerDivisionCombo.setItems(null);
         customerZipField.clear();
         customerPhoneField.clear();
     }
@@ -235,7 +238,7 @@ public class CustomerController implements Initializable {
             stage.setScene(scene);
             stage.setTitle(rb.getString("title"));
             stage.show();
-
+            stage.centerOnScreen();
         } catch (IOException e) {
             // If the fxml file is not found
             e.printStackTrace();
@@ -247,6 +250,7 @@ public class CustomerController implements Initializable {
      * @param actionEvent Not used
      */
     public void onCountryCombo(ActionEvent actionEvent) {
+
         int countryId = customerCountryCombo.getValue().getId();
 
         customerDivisionCombo.setItems(DivisionDAO.getDivisions(countryId));

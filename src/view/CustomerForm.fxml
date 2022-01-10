@@ -86,8 +86,8 @@
                         <TextField fx:id="customerIdField" disable="true" editable="false" promptText="ID" />
                         <TextField fx:id="customerNameField" promptText="Name" />
                         <TextField fx:id="customerAddressField" promptText="Address" />
-                        <ComboBox fx:id="customerCountryCombo" onAction="#onCountryCombo" prefWidth="150.0" promptText="Country" />
-                        <ComboBox fx:id="customerDivisionCombo" prefWidth="150.0" promptText="Division" />
+                        <ComboBox fx:id="customerCountryCombo" onAction="#onCountryCombo" prefWidth="150.0" />
+                        <ComboBox fx:id="customerDivisionCombo" prefWidth="150.0" />
                         <TextField fx:id="customerZipField" promptText="Postal Code" />
                         <TextField fx:id="customerPhoneField" promptText="Phone" />
                      </children>

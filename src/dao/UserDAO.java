@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class UserDAO {
     public static ObservableList<User> getUsers() {
-        String query = "SELECT User_ID, User_Name, User_Password FROM users";
+        String query = "SELECT User_ID, User_Name, Password FROM users";
         ObservableList<User> users = FXCollections.observableArrayList();
 
         try {
