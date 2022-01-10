@@ -1,8 +1,10 @@
 package controller;
 
+import dao.AppointmentDAO;
 import dao.CountryDAO;
 import dao.CustomerDAO;
 import dao.DivisionDAO;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.Country;
 import model.Customer;
 import model.Division;
@@ -182,7 +185,7 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Deletes a customer from the db
+     * Deletes a customer from the db and all associated appointments
      * @param actionEvent Not used
      */
     public void deleteCustomerClicked(ActionEvent actionEvent) {
@@ -194,7 +197,17 @@ public class CustomerController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteConfirm"));
             Optional<ButtonType> choice = alert.showAndWait();
             if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
-               CustomerDAO.deleteCustomer(customer);
+                // Get all appointments
+                ObservableList<Appointment> appointments = AppointmentDAO.getAppointments();
+                // Loop through appointments and find where appointments.customer_id = customer.id
+                // LAMBDA
+                appointments.forEach(appt -> {
+                    if (appt.getCustomer().getId() == customer.getId()) {
+                        AppointmentDAO.deleteAppointment(appt);
+                    }
+                });
+
+                CustomerDAO.deleteCustomer(customer);
             }
         }
         else {
