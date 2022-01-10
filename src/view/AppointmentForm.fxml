@@ -6,9 +6,11 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -107,6 +109,24 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </Button>
+                  <RadioButton fx:id="apptAllRadio" mnemonicParsing="false" onAction="#onApptAllRadio" selected="true" text="All" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                     <toggleGroup>
+                        <ToggleGroup fx:id="apptRadio" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="apptMonthRadio" mnemonicParsing="false" onAction="#onApptMonthRadio" text="Month" toggleGroup="$apptRadio" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="apptWeekRadio" mnemonicParsing="false" onAction="#onApptWeekRadio" text="Week" toggleGroup="$apptRadio" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </RadioButton>
                </children>
             </GridPane>
          </children>

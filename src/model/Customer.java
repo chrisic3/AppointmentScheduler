@@ -119,6 +119,10 @@ public class Customer {
         this.phone = phone;
     }
 
+    /**
+     * Overridden to display customer name
+     * @return Returns customer name
+     */
     @Override
     public String toString() {
         return name;

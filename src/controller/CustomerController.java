@@ -137,6 +137,7 @@ public class CustomerController implements Initializable {
             alert.showAndWait();
         } else if (id.isEmpty()){
             // Add new customer
+            // Id will be updated with generated id from db
             Customer customer = new Customer(-1, name, address, division, zip, phone);
             CustomerDAO.addCustomer(customer);
         } else {
@@ -203,6 +204,7 @@ public class CustomerController implements Initializable {
                 // LAMBDA
                 appointments.forEach(appt -> {
                     if (appt.getCustomer().getId() == customer.getId()) {
+                        // Delete each matching appointment
                         AppointmentDAO.deleteAppointment(appt);
                     }
                 });

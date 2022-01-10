@@ -63,6 +63,10 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Opens the appointments screen
+     * @param actionEvent Appointments button clicked
+     */
     public void onAppointmentsClick(ActionEvent actionEvent) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/AppointmentForm.fxml"));

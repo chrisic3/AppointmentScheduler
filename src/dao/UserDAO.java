@@ -12,6 +12,10 @@ import java.sql.SQLException;
  * Static class used to get a user from the db
  */
 public class UserDAO {
+    /**
+     * Gets all users from the db
+     * @return Returns an observable list of Users
+     */
     public static ObservableList<User> getUsers() {
         String query = "SELECT User_ID, User_Name, Password FROM users";
         ObservableList<User> users = FXCollections.observableArrayList();
@@ -63,6 +67,11 @@ public class UserDAO {
         return null;
     }
 
+    /**
+     * Gets a user from the db based on id
+     * @param idInput The id to lookup
+     * @return Returns a User
+     */
     public static User getUser(int idInput) {
         String query = "SELECT User_ID, User_Name, Password FROM users WHERE User_ID = ?";
 

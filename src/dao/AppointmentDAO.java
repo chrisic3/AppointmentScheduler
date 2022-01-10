@@ -12,8 +12,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.TimeZone;
 
+/**
+ * Static class used for Appointment db access
+ */
 public class AppointmentDAO {
-
+    /**
+     * Gets all appointments from the db
+     * @return Returns an observable list of Appointments
+     */
     public static ObservableList<Appointment> getAppointments() {
         String query = "SELECT a.Appointment_ID, a.Title, a.Description, a.Location, a.Type, " +
                         "a.Start, a.End, cu.Customer_ID, u.User_ID, co.Contact_ID " +
@@ -48,6 +54,10 @@ public class AppointmentDAO {
         return appointments;
     }
 
+    /**
+     * Adds an appointment to the db
+     * @param appointment The appointment to add
+     */
     public static void addAppointment(Appointment appointment) {
         String query = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -63,6 +73,10 @@ public class AppointmentDAO {
         }
     }
 
+    /**
+     * Updates an appointment in the db
+     * @param appointment The appointment to update
+     */
     public static void updateAppointment(Appointment appointment) {
         String query = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
                 "Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
@@ -70,6 +84,11 @@ public class AppointmentDAO {
         Query.updateAppointment(query, appointment);
     }
 
+    /**
+     * Deletes an appointment from the db
+     * Prompts an information message with id and type of each appointment deleted
+     * @param appointment The appointment to delete
+     */
     public static void deleteAppointment(Appointment appointment) {
         String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
         int id = appointment.getId();

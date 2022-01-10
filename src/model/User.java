@@ -62,6 +62,10 @@ public class User {
         this.password = password;
     }
 
+    /**
+     * Overridden to display the user's username
+     * @return Returns the username
+     */
     @Override
     public String toString() {
         return username;

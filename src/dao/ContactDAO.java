@@ -3,15 +3,18 @@ package dao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Contact;
-import model.Country;
-import model.Customer;
-import model.Division;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Static class used for Appointment db access
+ */
 public class ContactDAO {
-
+    /**
+     * Gets all contacts from the db
+     * @return Returns an observable list of Contacts
+     */
     public static ObservableList<Contact> getContacts() {
         String query = "SELECT Contact_ID, Contact_Name, Email FROM contacts";
         ObservableList<Contact> contacts = FXCollections.observableArrayList();
@@ -35,6 +38,11 @@ public class ContactDAO {
         return contacts;
     }
 
+    /**
+     * Gets a contact from the db based on id
+     * @param idInput The id to lookup
+     * @return Returns a Contact
+     */
     public static Contact getContact(int idInput) {
         String query = "SELECT Contact_ID, Contact_Name, Email FROM contacts WHERE Contact_ID = " + idInput;
 

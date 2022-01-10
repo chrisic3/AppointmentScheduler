@@ -46,6 +46,11 @@ public class CustomerDAO {
         return customers;
     }
 
+    /**
+     * Gets a customer based on the provided id
+     * @param idInput The customer id to look up
+     * @return Returns a Customer
+     */
     public static Customer getCustomer(int idInput) {
         String query = "SELECT c.Customer_ID, c.Customer_Name, c.Address, C.Postal_Code, c.Phone, d.Division_ID, " +
                 "d.Division, d.Country_ID, co.Country FROM customers AS c LEFT JOIN first_level_divisions AS d ON " +
@@ -77,11 +82,7 @@ public class CustomerDAO {
 
     /**
      * Adds a customer to the db
-     * @param name The customer name
-     * @param address The customer address
-     * @param division The customer division
-     * @param zip The customer zip
-     * @param phone The customer phone
+     * @param customer The customer to add
      */
     public static void addCustomer(Customer customer) {
         String query = "INSERT INTO customers (Customer_Name, Address, Division_ID, Postal_Code, Phone) " +
