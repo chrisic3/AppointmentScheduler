@@ -19,6 +19,7 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         //Locale.setDefault(new Locale("fr", "FR"));
+        //Locale.setDefault(new Locale("gb", "GB"));
         DBConnection.openConnection();
         launch(args);
         DBConnection.closeConnection();

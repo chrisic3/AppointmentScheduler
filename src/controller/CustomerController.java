@@ -89,29 +89,29 @@ public class CustomerController implements Initializable {
         deleteCustomerButton.setText(rb.getString("delete"));
         customerClearButton.setText(rb.getString("clear"));
         menuCustomerButton.setText(rb.getString("menu"));
-        customerIdColumn.setText(rb.getString("id"));
-        customerNameColumn.setText(rb.getString("name"));
-        customerAddressColumn.setText(rb.getString("address"));
-        customerDivisionColumn.setText(rb.getString("division"));
-        customerPhoneColumn.setText(rb.getString("phone"));
-        customerIdField.setPromptText(rb.getString("id"));
-        customerNameField.setPromptText(rb.getString("name"));
-        customerAddressField.setPromptText(rb.getString("address"));
-        customerCountryCombo.setPromptText(rb.getString("country"));
-        customerDivisionCombo.setPromptText(rb.getString("division"));
-        customerZipField.setPromptText(rb.getString("zip"));
-        customerPhoneField.setPromptText(rb.getString("phone"));
+        customerIdColumn.setText(rb.getString("customerId"));
+        customerNameColumn.setText(rb.getString("customerName"));
+        customerAddressColumn.setText(rb.getString("customerAddress"));
+        customerDivisionColumn.setText(rb.getString("customerDivision"));
+        customerPhoneColumn.setText(rb.getString("customerPhone"));
+        customerIdField.setPromptText(rb.getString("customerId"));
+        customerNameField.setPromptText(rb.getString("customerName"));
+        customerAddressField.setPromptText(rb.getString("customerAddress"));
+        customerCountryCombo.setPromptText(rb.getString("customerCountry"));
+        customerDivisionCombo.setPromptText(rb.getString("customerDivision"));
+        customerZipField.setPromptText(rb.getString("customerZip"));
+        customerPhoneField.setPromptText(rb.getString("customerPhone"));
 
         // Set table
         customerTable.setItems(CustomerDAO.getCustomers());
 
         // Set table columns
-        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-        customerDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("division"));
-        customerZipColumn.setCellValueFactory(new PropertyValueFactory<>("zip"));
-        customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
+        customerDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
+        customerZipColumn.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
+        customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
 
         // Set country box
         customerCountryCombo.setItems(CountryDAO.getCountries());
@@ -171,7 +171,7 @@ public class CustomerController implements Initializable {
         if (customer == null) {
             // Error if no selection
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText(rb.getString("noSelection"));
+            alert.setContentText(rb.getString("noCustomerSelection"));
             alert.showAndWait();
         } else {
             // Populate fields/boxes
@@ -195,7 +195,7 @@ public class CustomerController implements Initializable {
 
         if (customer != null) {
             // Confirm deletion
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteConfirm"));
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteCustomerConfirm"));
             Optional<ButtonType> choice = alert.showAndWait();
             if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
                 // Get all appointments
@@ -205,7 +205,7 @@ public class CustomerController implements Initializable {
                 appointments.forEach(appt -> {
                     if (appt.getCustomer().getId() == customer.getId()) {
                         // Delete each matching appointment
-                        AppointmentDAO.deleteAppointment(appt);
+                        AppointmentDAO.deleteAppointment(appt, rb);
                     }
                 });
 
@@ -215,7 +215,7 @@ public class CustomerController implements Initializable {
         else {
         // Display error if no selection
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText(rb.getString("noSelection"));
+        alert.setContentText(rb.getString("noCustomerSelection"));
         alert.showAndWait();
         }
 

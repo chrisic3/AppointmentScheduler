@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 /**
@@ -88,8 +89,9 @@ public class AppointmentDAO {
      * Deletes an appointment from the db
      * Prompts an information message with id and type of each appointment deleted
      * @param appointment The appointment to delete
+     * @param rb The language resource bundle
      */
-    public static void deleteAppointment(Appointment appointment) {
+    public static void deleteAppointment(Appointment appointment, ResourceBundle rb) {
         String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
         int id = appointment.getId();
         String type = appointment.getType();
@@ -98,7 +100,7 @@ public class AppointmentDAO {
 
         // Display id and type of appointment
         Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
-        alert2.setContentText("Appointment number " + id + " of type " + type + " was cancelled.");
+        alert2.setContentText(rb.getString("apptDeleteInform") + id + ", " + type + ".");
         alert2.showAndWait();
     }
 }

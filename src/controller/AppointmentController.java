@@ -108,11 +108,41 @@ public class AppointmentController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
 
+        // Set language
+        apptTableLabel.setText(rb.getString("appointments"));
+        saveApptButton.setText(rb.getString("save"));
+        updateApptButton.setText(rb.getString("update"));
+        deleteApptButton.setText(rb.getString("delete"));
+        clearApptButton.setText(rb.getString("clear"));
+        menuApptButton.setText(rb.getString("menu"));
+        apptIdColumn.setText(rb.getString("apptId"));
+        apptTitleColumn.setText(rb.getString("apptTitle"));
+        apptDescColumn.setText(rb.getString("apptDesc"));
+        apptLocationColumn.setText(rb.getString("apptLocation"));
+        apptContactColumn.setText(rb.getString("apptContact"));
+        apptTypeColumn.setText(rb.getString("apptType"));
+        apptStartColumn.setText(rb.getString("apptStart"));
+        apptEndColumn.setText(rb.getString("apptEnd"));
+        apptCustomerColumn.setText(rb.getString("apptCustomer"));
+        apptUserColumn.setText(rb.getString("apptUser"));
+        apptIdField.setPromptText(rb.getString("apptId"));
+        apptTitleField.setPromptText(rb.getString("apptTitle"));
+        apptDescField.setPromptText(rb.getString("apptDesc"));
+        apptLocationField.setPromptText(rb.getString("apptLocation"));
+        apptStartDate.setPromptText(rb.getString("apptStartDate"));
+        apptStartTimeCombo.setPromptText(rb.getString("apptStartTime"));
+        apptEndDate.setPromptText(rb.getString("apptEndDate"));
+        apptEndTimeCombo.setPromptText(rb.getString("apptEndTime"));
+        apptContactCombo.setPromptText(rb.getString("apptContact"));
+        apptTypeCombo.setPromptText(rb.getString("apptType"));
+        apptCustomerCombo.setPromptText(rb.getString("apptCustomer"));
+        apptUserCombo.setPromptText(rb.getString("apptUser"));
+
         // Set table
         apptTable.setItems(AppointmentDAO.getAppointments());
 
         // Set table columns
-        apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         apptTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         apptDescColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         apptLocationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -171,14 +201,14 @@ public class AppointmentController implements Initializable {
         } else if (start.isAfter(end)) {
             // Error if start date/time is after end date/time
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Start time must be before end time.");
+            alert.setContentText(rb.getString("apptTimeError"));
             alert.showAndWait();
             // Return to avoid clearing fields
             return;
         } else if ((startEst.isBefore(openDate)) || (endEst.isAfter(endDate))) {
             // Error if times before or after business times
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Time must be between 8 and 22 Eastern.");
+            alert.setContentText(rb.getString("apptBusinessTimeError"));
             alert.showAndWait();
             // Return to avoid clearing fields
             return;
@@ -222,7 +252,7 @@ public class AppointmentController implements Initializable {
         if (appointment == null) {
             // Error if no selection
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Select an appointment from the list first.");
+            alert.setContentText(rb.getString("apptNoSelection"));
             alert.showAndWait();
         } else {
             // Populate fields/boxes
@@ -270,16 +300,16 @@ public class AppointmentController implements Initializable {
 
         if (appointment != null) {
             // Confirm deletion
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this appointment?");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("apptDeleteConfirm"));
             Optional<ButtonType> choice = alert.showAndWait();
             if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
-                AppointmentDAO.deleteAppointment(appointment);
+                AppointmentDAO.deleteAppointment(appointment, rb);
             }
         }
         else {
             // Display error if no selection
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText(rb.getString("noSelection"));
+            alert.setContentText(rb.getString("apptNoSelection"));
             alert.showAndWait();
         }
 
