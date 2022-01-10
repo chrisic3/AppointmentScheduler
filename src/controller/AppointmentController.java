@@ -19,6 +19,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -82,13 +83,13 @@ public class AppointmentController implements Initializable {
         apptCustomerCombo.setItems(CustomerDAO.getCustomers());
         apptUserCombo.setItems(UserDAO.getUsers());
 
-        LocalTime start = Appointment.getOpen();
-        LocalTime end = Appointment.getClose();
-        while (start.isBefore(end.plusSeconds(1))) {
-            apptStartTimeCombo.getItems().add(start);
-            apptEndTimeCombo.getItems().add(start);
-            start = start.plusHours(1);
-        }
+        LocalTime start = LocalTime.of(0,0);
+        LocalTime end = LocalTime.of(0,0);
+        do {
+            apptStartTimeCombo.getItems().add(end);
+            apptEndTimeCombo.getItems().add(end);
+            end = end.plusHours(1);
+        } while (start.isBefore(end));
     }
 
     public void saveApptClicked(ActionEvent actionEvent) {
@@ -104,13 +105,26 @@ public class AppointmentController implements Initializable {
         Customer customer = apptCustomerCombo.getValue();
         User user = apptUserCombo.getValue();
 
-
+        LocalDateTime openDate = LocalDateTime.of(apptStartDate.getValue(), Appointment.getOpen());
+        LocalDateTime endDate = LocalDateTime.of(apptEndDate.getValue(), Appointment.getClose());
+        LocalDateTime startEst = start.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("US/Eastern")).toLocalDateTime();
+        LocalDateTime endEst = end.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("US/Eastern")).toLocalDateTime();
 
         if (contact == null) {
             // Error if contact is empty (quick and dirty validation)
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(rb.getString("emptyField"));
             alert.showAndWait();
+        } else if (start.isAfter(end)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Start time must be before end time.");
+            alert.showAndWait();
+            return;
+        } else if ((startEst.isBefore(openDate)) || (endEst.isAfter(endDate))) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Time must be between 8 and 22 Eastern.");
+            alert.showAndWait();
+            return;
         } else if (id.isEmpty()){
             // Add new appointment
             Appointment appointment = new Appointment(-1, title, description, location, contact, type, start, end, customer, user);
@@ -186,7 +200,7 @@ public class AppointmentController implements Initializable {
 
         if (appointment != null) {
             // Confirm deletion
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, rb.getString("deleteConfirm"));
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this appointment?");
             Optional<ButtonType> choice = alert.showAndWait();
             if (choice.isPresent() && choice.get().equals(ButtonType.OK)) {
                 AppointmentDAO.deleteAppointment(appointment);

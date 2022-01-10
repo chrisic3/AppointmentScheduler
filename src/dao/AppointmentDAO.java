@@ -2,6 +2,7 @@ package dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import model.*;
 
 import java.sql.ResultSet;
@@ -71,7 +72,14 @@ public class AppointmentDAO {
 
     public static void deleteAppointment(Appointment appointment) {
         String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
+        int id = appointment.getId();
+        String type = appointment.getType();
 
         Query.makeDeleteQuery(query, appointment.getId());
+
+        // Display id and type of appointment
+        Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+        alert2.setContentText("Appointment number " + id + " of type " + type + " was cancelled.");
+        alert2.showAndWait();
     }
 }
