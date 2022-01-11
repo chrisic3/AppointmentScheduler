@@ -4,6 +4,8 @@ import dao.AppointmentDAO;
 import dao.ContactDAO;
 import dao.CustomerDAO;
 import dao.UserDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,9 +20,8 @@ import model.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -101,8 +102,8 @@ public class AppointmentController implements Initializable {
 
     /**
      * Initializes the appointment form and sets the language, table, and comboboxes
-     * @param url
-     * @param resourceBundle
+     * @param url Not user
+     * @param resourceBundle Language resource bundle
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -125,6 +126,9 @@ public class AppointmentController implements Initializable {
         apptEndColumn.setText(rb.getString("apptEnd"));
         apptCustomerColumn.setText(rb.getString("apptCustomer"));
         apptUserColumn.setText(rb.getString("apptUser"));
+        apptAllRadio.setText(rb.getString("apptAllRadio"));
+        apptMonthRadio.setText(rb.getString("apptMonthRadio"));
+        apptWeekRadio.setText(rb.getString("apptWeekRadio"));
         apptIdField.setPromptText(rb.getString("apptId"));
         apptTitleField.setPromptText(rb.getString("apptTitle"));
         apptDescField.setPromptText(rb.getString("apptDesc"));
@@ -142,7 +146,7 @@ public class AppointmentController implements Initializable {
         apptTable.setItems(AppointmentDAO.getAppointments());
 
         // Set table columns
-        apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         apptTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         apptDescColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         apptLocationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -339,12 +343,56 @@ public class AppointmentController implements Initializable {
         }
     }
 
+    /**
+     * Display all appointments if selected
+     * @param actionEvent Not used
+     */
     public void onApptAllRadio(ActionEvent actionEvent) {
+        apptTable.setItems(AppointmentDAO.getAppointments());
     }
 
+    /**
+     * Display appointments for current month if selected
+     * @param actionEvent Not used
+     */
     public void onApptMonthRadio(ActionEvent actionEvent) {
+        // Get current month
+        Month currentMonth = LocalDate.now().getMonth();
+
+        ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
+        ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
+
+
+        appts.forEach(appt -> {
+            if (appt.getStart().getMonth().equals(currentMonth)) {
+                curAppts.add(appt);
+            }
+        });
+
+        apptTable.setItems(curAppts);
     }
 
+    /**
+     * Display appointments for current week if selected
+     * @param actionEvent Not used
+     */
     public void onApptWeekRadio(ActionEvent actionEvent) {
+        LocalDate firstDayOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate lastDayOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+        ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
+        ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
+
+        appts.forEach(appt -> {
+            // Using the start date of the appointment only because even if it ends in a later week,
+            // it should show up in the current week, which is when it starts.
+            LocalDate start = appt.getStart().toLocalDate();
+
+            if ((start.isAfter(firstDayOfWeek) && (start.isBefore(lastDayOfWeek)))) {
+                curAppts.add(appt);
+            }
+        });
+
+        apptTable.setItems(curAppts);
     }
 }
