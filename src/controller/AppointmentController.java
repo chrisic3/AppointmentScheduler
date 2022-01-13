@@ -83,6 +83,8 @@ public class AppointmentController implements Initializable {
     @FXML
     private Button updateApptButton;
     @FXML
+    private Button updateApptTimeButton;
+    @FXML
     private Button deleteApptButton;
     @FXML
     private Button menuApptButton;
@@ -113,6 +115,7 @@ public class AppointmentController implements Initializable {
         apptTableLabel.setText(rb.getString("appointments"));
         saveApptButton.setText(rb.getString("save"));
         updateApptButton.setText(rb.getString("update"));
+        updateApptTimeButton.setText(rb.getString("apptUpdateTime"));
         deleteApptButton.setText(rb.getString("delete"));
         clearApptButton.setText(rb.getString("clear"));
         menuApptButton.setText(rb.getString("menu"));
@@ -143,7 +146,7 @@ public class AppointmentController implements Initializable {
         apptUserCombo.setPromptText(rb.getString("apptUser"));
 
         // Set table
-        apptTable.setItems(AppointmentDAO.getAppointments());
+        refreshTable();
 
         // Set table columns
         apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -163,6 +166,7 @@ public class AppointmentController implements Initializable {
         apptCustomerCombo.setItems(CustomerDAO.getCustomers());
         apptUserCombo.setItems(UserDAO.getUsers());
 
+        // Initialize time combo boxes
         LocalTime start = LocalTime.of(0,0);
         LocalTime end = LocalTime.of(0,0);
         do {
@@ -192,7 +196,7 @@ public class AppointmentController implements Initializable {
 
         // Create business hours for given day
         LocalDateTime openDate = LocalDateTime.of(apptStartDate.getValue(), Appointment.getOpen());
-        LocalDateTime endDate = LocalDateTime.of(apptEndDate.getValue(), Appointment.getClose());
+        LocalDateTime closeDate = LocalDateTime.of(apptEndDate.getValue(), Appointment.getClose());
         // Convert chosen times to EST for comparing to business hours
         LocalDateTime startEst = start.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("US/Eastern")).toLocalDateTime();
         LocalDateTime endEst = end.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("US/Eastern")).toLocalDateTime();
@@ -209,7 +213,7 @@ public class AppointmentController implements Initializable {
             alert.showAndWait();
             // Return to avoid clearing fields
             return;
-        } else if ((startEst.isBefore(openDate)) || (endEst.isAfter(endDate))) {
+        } else if ((startEst.isBefore(openDate)) || (endEst.isAfter(closeDate))) {
             // Error if times before or after business times
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(rb.getString("apptBusinessTimeError"));
@@ -228,7 +232,7 @@ public class AppointmentController implements Initializable {
         }
 
         // Update table to reflect changes
-        apptTable.setItems(AppointmentDAO.getAppointments());
+        refreshTable();
 
         // Clear all fields/boxes
         apptIdField.clear();
@@ -276,6 +280,43 @@ public class AppointmentController implements Initializable {
     }
 
     /**
+     * Lets the user update just the time for a selected appointment
+     * @param actionEvent Not used
+     */
+    public void updateApptTimeButton(ActionEvent actionEvent) {
+        // Get selected appointment
+        Appointment appointment = apptTable.getSelectionModel().getSelectedItem();
+
+        if (appointment == null) {
+            // Error if no selection
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(rb.getString("apptNoSelection"));
+            alert.showAndWait();
+        } else {
+            // Pass the start and end times to the update time controller
+            UpdateTimeController.setAppointment(appointment);
+            UpdateTimeController.setApptController(this);
+
+            // Load update time form
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/UpdateTimeForm.fxml"));
+                loader.setResources(rb);
+
+                Stage stage = new Stage();
+                Scene scene = new Scene(loader.load());
+
+                stage.setScene(scene);
+                stage.setTitle(rb.getString("title"));
+                stage.show();
+                stage.centerOnScreen();
+            } catch (IOException e) {
+                // If the fxml file is not found
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Clears the input fields/boxes
      * @param actionEvent Not used
      */
@@ -318,7 +359,7 @@ public class AppointmentController implements Initializable {
         }
 
         // Update table to reflect deletion
-        apptTable.setItems(AppointmentDAO.getAppointments());
+        refreshTable();
     }
 
     /**
@@ -348,7 +389,7 @@ public class AppointmentController implements Initializable {
      * @param actionEvent Not used
      */
     public void onApptAllRadio(ActionEvent actionEvent) {
-        apptTable.setItems(AppointmentDAO.getAppointments());
+        refreshTable();
     }
 
     /**
@@ -362,7 +403,7 @@ public class AppointmentController implements Initializable {
         ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
         ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
 
-
+        // LAMBDA
         appts.forEach(appt -> {
             if (appt.getStart().getMonth().equals(currentMonth)) {
                 curAppts.add(appt);
@@ -383,6 +424,7 @@ public class AppointmentController implements Initializable {
         ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
         ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
 
+        // LAMBDA
         appts.forEach(appt -> {
             // Using the start date of the appointment only because even if it ends in a later week,
             // it should show up in the current week, which is when it starts.
@@ -394,5 +436,12 @@ public class AppointmentController implements Initializable {
         });
 
         apptTable.setItems(curAppts);
+    }
+
+    /**
+     * Refresh the appointment table
+     */
+    public void refreshTable() {
+        apptTable.setItems(AppointmentDAO.getAppointments());
     }
 }

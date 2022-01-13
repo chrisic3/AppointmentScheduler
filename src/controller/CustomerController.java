@@ -106,12 +106,12 @@ public class CustomerController implements Initializable {
         customerTable.setItems(CustomerDAO.getCustomers());
 
         // Set table columns
-        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("customerAddress"));
-        customerDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("customerDivision"));
-        customerZipColumn.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
-        customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        customerDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("division"));
+        customerZipColumn.setCellValueFactory(new PropertyValueFactory<>("zip"));
+        customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
         // Set country box
         customerCountryCombo.setItems(CountryDAO.getCountries());
