@@ -87,7 +87,7 @@ public class UpdateTimeController implements Initializable {
 
     /**
      * Updates the start and end time in a new window
-     * @param actionEvent The button clicked
+     * @param actionEvent The save button clicked
      */
     public void onUpdateTimeSave(ActionEvent actionEvent) {
         // Get input from boxes and convert to local date time
@@ -119,7 +119,11 @@ public class UpdateTimeController implements Initializable {
         } else {
             appointment.setStart(start);
             appointment.setEnd(end);
-            AppointmentDAO.updateAppointment(appointment);
+
+            // If no overlap then add, else do nothing
+            if (!apptController.hasOverlap(appointment)) {
+                AppointmentDAO.addAppointment(appointment);
+            }
         }
 
         // Refresh the table
@@ -132,7 +136,7 @@ public class UpdateTimeController implements Initializable {
 
     /**
      * Close the window
-     * @param actionEvent The button clicked
+     * @param actionEvent The cancel button clicked
      */
     public void onUpdateTimeCancel(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

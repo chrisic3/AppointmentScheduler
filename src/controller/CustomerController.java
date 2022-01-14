@@ -119,9 +119,8 @@ public class CustomerController implements Initializable {
 
     /**
      * Adds a customer to the db if the id is empty, otherwise updates the selected customer
-     * @param actionEvent Not used
      */
-    public void saveCustomerClicked(ActionEvent actionEvent) {
+    public void saveCustomerClicked() {
         // Get input from fields/boxes
         String id = customerIdField.getText();
         String name = customerNameField.getText();
@@ -162,9 +161,8 @@ public class CustomerController implements Initializable {
 
     /**
      * Displays the selected customer information in the fields/boxes for editing
-     * @param actionEvent Not used
      */
-    public void updateCustomerClicked(ActionEvent actionEvent) {
+    public void updateCustomerClicked() {
         // Get selected customer
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
 
@@ -186,10 +184,11 @@ public class CustomerController implements Initializable {
     }
 
     /**
-     * Deletes a customer from the db and all associated appointments
-     * @param actionEvent Not used
+     * Deletes a customer from the db and all associated appointments.
+     * A lambda is used here to loop through each appointment and delete each one the
+     * customer is attached to.
      */
-    public void deleteCustomerClicked(ActionEvent actionEvent) {
+    public void deleteCustomerClicked() {
         // Get selected customer
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
 
@@ -201,7 +200,7 @@ public class CustomerController implements Initializable {
                 // Get all appointments
                 ObservableList<Appointment> appointments = AppointmentDAO.getAppointments();
                 // Loop through appointments and find where appointments.customer_id = customer.id
-                // LAMBDA
+                // Lambda to loop through appointments and delete ones attached to given customer
                 appointments.forEach(appt -> {
                     if (appt.getCustomer().getId() == customer.getId()) {
                         // Delete each matching appointment
@@ -225,9 +224,8 @@ public class CustomerController implements Initializable {
 
     /**
      * Clears the input fields/boxes
-     * @param actionEvent Not used
      */
-    public void onCustomerClear(ActionEvent actionEvent) {
+    public void onCustomerClear() {
         customerIdField.clear();
         customerNameField.clear();
         customerAddressField.clear();
@@ -240,7 +238,7 @@ public class CustomerController implements Initializable {
 
     /**
      * Takes the user back to the main menu
-     * @param actionEvent Not used
+     * @param actionEvent The menu button clicked
      */
     public void menuCustomerClicked(ActionEvent actionEvent) {
         try {
@@ -262,9 +260,8 @@ public class CustomerController implements Initializable {
 
     /**
      * Sets the division box based on the id of the country
-     * @param actionEvent Not used
      */
-    public void onCountryCombo(ActionEvent actionEvent) {
+    public void onCountryCombo() {
 
         int countryId = customerCountryCombo.getValue().getId();
 

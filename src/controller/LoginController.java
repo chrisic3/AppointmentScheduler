@@ -1,6 +1,9 @@
 package controller;
 
+import dao.AppointmentDAO;
 import dao.UserDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.User;
 
 import java.io.IOException;
@@ -38,15 +42,17 @@ public class LoginController implements Initializable {
 
     // Class variables
     private ResourceBundle rb;
+    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
     /**
-     * Initializes the language for the login screen
+     * Initializes the language for the login screen and local variables
      * @param url Not used
      * @param resourceBundle The language resource bundle
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
+        this.appointments = AppointmentDAO.getAppointments();
 
         usernameLabel.setText(rb.getString("username"));
         passwordLabel.setText(rb.getString("password"));

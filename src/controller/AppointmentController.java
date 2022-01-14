@@ -101,6 +101,7 @@ public class AppointmentController implements Initializable {
 
     // Class variables
     private ResourceBundle rb;
+    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
     /**
      * Initializes the appointment form and sets the language, table, and comboboxes
@@ -110,6 +111,7 @@ public class AppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
+        this.appointments = AppointmentDAO.getAppointments();
 
         // Set language
         apptTableLabel.setText(rb.getString("appointments"));
@@ -146,7 +148,7 @@ public class AppointmentController implements Initializable {
         apptUserCombo.setPromptText(rb.getString("apptUser"));
 
         // Set table
-        refreshTable();
+        apptTable.setItems(appointments);
 
         // Set table columns
         apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -179,9 +181,8 @@ public class AppointmentController implements Initializable {
     /**
      * Adds appointment to db if id is empty, otherwise updates appointment
      * Checks for start being after end, and for times being during business hours
-     * @param actionEvent Not used
      */
-    public void saveApptClicked(ActionEvent actionEvent) {
+    public void saveApptClicked() {
         // Get input from fields/boxes
         String id = apptIdField.getText();
         String title = apptTitleField.getText();
@@ -224,11 +225,17 @@ public class AppointmentController implements Initializable {
             // Add new appointment
             // Id will be updated with generated id from db
             Appointment appointment = new Appointment(-1, title, description, location, contact, type, start, end, customer, user);
-            AppointmentDAO.addAppointment(appointment);
+            // If no overlap then add, else do nothing
+            if (!hasOverlap(appointment)) {
+                AppointmentDAO.addAppointment(appointment);
+            }
         } else {
             // Update selected appointment
             Appointment appointment = new Appointment(Integer.parseInt(id), title, description, location, contact, type, start, end, customer, user);
-            AppointmentDAO.updateAppointment(appointment);
+            // If no overlap then add, else do nothing
+            if (!hasOverlap(appointment)) {
+                AppointmentDAO.addAppointment(appointment);
+            }
         }
 
         // Update table to reflect changes
@@ -251,9 +258,8 @@ public class AppointmentController implements Initializable {
 
     /**
      * Displays the selected appointment information in the fields/boxes for editing
-     * @param actionEvent Not used
      */
-    public void updateApptClicked(ActionEvent actionEvent) {
+    public void updateApptClicked() {
         // Get selected appointment
         Appointment appointment = apptTable.getSelectionModel().getSelectedItem();
 
@@ -281,9 +287,8 @@ public class AppointmentController implements Initializable {
 
     /**
      * Lets the user update just the time for a selected appointment
-     * @param actionEvent Not used
      */
-    public void updateApptTimeButton(ActionEvent actionEvent) {
+    public void updateApptTimeButton() {
         // Get selected appointment
         Appointment appointment = apptTable.getSelectionModel().getSelectedItem();
 
@@ -318,9 +323,8 @@ public class AppointmentController implements Initializable {
 
     /**
      * Clears the input fields/boxes
-     * @param actionEvent Not used
      */
-    public void clearApptClicked(ActionEvent actionEvent) {
+    public void clearApptClicked() {
         apptIdField.clear();
         apptTitleField.clear();
         apptDescField.clear();
@@ -337,9 +341,8 @@ public class AppointmentController implements Initializable {
 
     /**
      * Deletes an appointment from the db
-     * @param actionEvent Not used
      */
-    public void deleteApptClicked(ActionEvent actionEvent) {
+    public void deleteApptClicked() {
         // Get selected appointment
         Appointment appointment  = apptTable.getSelectionModel().getSelectedItem();
 
@@ -364,7 +367,7 @@ public class AppointmentController implements Initializable {
 
     /**
      * Takes the user back to the main menu
-     * @param actionEvent Not used
+     * @param actionEvent The menu button clicked
      */
     public void menuApptClicked(ActionEvent actionEvent) {
         try {
@@ -386,24 +389,24 @@ public class AppointmentController implements Initializable {
 
     /**
      * Display all appointments if selected
-     * @param actionEvent Not used
      */
-    public void onApptAllRadio(ActionEvent actionEvent) {
+    public void onApptAllRadio() {
         refreshTable();
     }
 
     /**
-     * Display appointments for current month if selected
-     * @param actionEvent Not used
+     * Display appointments for current month if selected.
+     * A lambda is used here for a simple loop through the list of appointments in order to
+     * add each one that matches the current month to the new list to display.
      */
-    public void onApptMonthRadio(ActionEvent actionEvent) {
+    public void onApptMonthRadio() {
         // Get current month
         Month currentMonth = LocalDate.now().getMonth();
 
         ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
         ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
 
-        // LAMBDA
+        // Lambda to loop through and add matching one to new list
         appts.forEach(appt -> {
             if (appt.getStart().getMonth().equals(currentMonth)) {
                 curAppts.add(appt);
@@ -414,17 +417,18 @@ public class AppointmentController implements Initializable {
     }
 
     /**
-     * Display appointments for current week if selected
-     * @param actionEvent Not used
+     * Display appointments for current week if selected.
+     * A lambda is used here for a simple loop through the list of appointments in order to
+     * add each one that matches the current week to the new list to display.
      */
-    public void onApptWeekRadio(ActionEvent actionEvent) {
+    public void onApptWeekRadio() {
         LocalDate firstDayOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate lastDayOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
         ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
         ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
 
-        // LAMBDA
+        // Lambda to loop through and add matching one to new list
         appts.forEach(appt -> {
             // Using the start date of the appointment only because even if it ends in a later week,
             // it should show up in the current week, which is when it starts.
@@ -442,6 +446,52 @@ public class AppointmentController implements Initializable {
      * Refresh the appointment table
      */
     public void refreshTable() {
-        apptTable.setItems(AppointmentDAO.getAppointments());
+        appointments.clear();
+        appointments.addAll(AppointmentDAO.getAppointments());
+    }
+
+    /**
+     * Checks the given appointment against each one in the db for a time overlap.
+     * Only checks appointments with the same customer and
+     * ignores appointments with the same id (same appointment).
+     * @param newAppt Appointment to check
+     * @return Returns true and an error prompt if overlap is found, otherwise false
+     */
+    public boolean hasOverlap(Appointment newAppt) {
+        boolean overlap = false;
+        LocalDateTime newStart = newAppt.getStart();
+        LocalDateTime newEnd = newAppt.getEnd();
+
+        for (Appointment appt : appointments) {
+            LocalDateTime curStart = appt.getStart();
+            LocalDateTime curEnd = appt.getEnd();
+
+            // Don't check against the same appointment or any with different customers
+            if ((appt.getId() != newAppt.getId()) && (appt.getCustomer().equals(newAppt.getCustomer()))) {
+                if (((newStart.isAfter(curStart)) || (newStart.equals(curStart))) &&
+                        (newStart.isBefore(curEnd))) {
+                    // New appointment starts during the existing one
+                    overlap = true;
+                } else if ((newEnd.isAfter(curStart)) && ((newEnd.isBefore(curEnd)) || (newEnd.equals(curEnd)))) {
+                    // New appointment ends during the existing one
+                    overlap = true;
+                } else if (((newStart.isBefore(curStart)) || (newStart.equals(curStart))) &&
+                        ((newEnd.isAfter(curEnd)) || (newEnd.equals(curEnd)))) {
+                    // New appointment starts before or after the current one
+                    overlap = true;
+                }
+            }
+
+            // If overlap, prompt error and return true
+            if (overlap) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText(rb.getString("overlap"));
+                alert.showAndWait();
+
+                return overlap;
+            }
+        }
+
+        return overlap;
     }
 }
