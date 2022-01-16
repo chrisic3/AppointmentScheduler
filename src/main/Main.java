@@ -1,3 +1,5 @@
+package main;
+
 import dao.DBConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +15,7 @@ import java.util.ResourceBundle;
  */
 public class Main extends Application {
     /**
-     * Main method changes default locale, opens db connection, launches application, then closes
+     * main.Main method changes default locale, opens db connection, launches application, then closes
      * the db connection
      * @param args Cmd line arguments
      */
@@ -36,7 +38,7 @@ public class Main extends Application {
 
         try {
             // Load xml file and set the resources
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("view/LoginForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/LoginForm.fxml"));
             loader.setResources(rb);
 
             // Set up the scene
