@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppointmentController">
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ContactScheduleController">
    <center>
       <Group BorderPane.alignment="CENTER">
          <children>
@@ -73,6 +73,7 @@
                      <children>
                         <ComboBox fx:id="contactContactCombo" prefWidth="150.0" promptText="Contact" />
                         <Button fx:id="contactSelectButton" mnemonicParsing="false" onAction="#contactSelectButtonClicked" text="Select" />
+                        <Button fx:id="contactAllButton" mnemonicParsing="false" onAction="#contactAllButtonClicked" text="All" />
                      </children>
                   </VBox>
                </children>
