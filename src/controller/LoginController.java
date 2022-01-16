@@ -15,8 +15,15 @@ import javafx.stage.Stage;
 import model.Appointment;
 import model.User;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -42,6 +49,7 @@ public class LoginController implements Initializable {
 
     // Class variables
     private ResourceBundle rb;
+    String filename = "login_activity.txt";
 
     /**
      * Initializes the language for the login screen and local variables
@@ -66,40 +74,65 @@ public class LoginController implements Initializable {
      * @param actionEvent Login button clicked
      */
     public void onLoginClick(ActionEvent actionEvent) {
-        // Check that both fields have input
-        if (!usernameField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
-            // Get user from db
-            User user = UserDAO.getUser(usernameField.getText(), passwordField.getText());
+        try {
+            // Get time for log-in file
+            Timestamp currentTime = Timestamp.valueOf(LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
 
-            // Load the menu screen or provide an error
-            if (user != null) {
-                // Load the menu screen
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
-                    loader.setResources(rb);
+            // File output
+            FileWriter fw = new FileWriter(filename, true);
+            PrintWriter pw = new PrintWriter(fw);
 
-                    Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-                    Scene scene = new Scene(loader.load());
+            // Get username from text field for logging
+            String username = usernameField.getText();
 
-                    stage.setScene(scene);
-                    stage.setTitle(rb.getString("title"));
-                    stage.show();
-                    stage.centerOnScreen();
-                } catch (IOException e) {
-                    // If the fxml file is not found
-                    e.printStackTrace();
+            // Check that both fields have input
+            if (!usernameField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
+                // Get user from db
+                User user = UserDAO.getUser(usernameField.getText(), passwordField.getText());
+
+                // Load the menu screen or provide an error
+                if (user != null) {
+                    // Load the menu screen
+                    try {
+                        // Log log-in
+                        pw.println("User " + user.getUsername() + " successfully logged in at " + currentTime + " UTC");
+
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/MenuForm.fxml"));
+                        loader.setResources(rb);
+
+                        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                        Scene scene = new Scene(loader.load());
+
+                        stage.setScene(scene);
+                        stage.setTitle(rb.getString("title"));
+                        stage.show();
+                        stage.centerOnScreen();
+                    } catch (IOException e) {
+                        // If the fxml file is not found
+                        e.printStackTrace();
+                    }
+                } else {
+                    // Log failed Log-in
+                    pw.println("User " + username + " gave an invalid log-in at " + currentTime + " UTC");
+
+                    // Error message if user is not found in the db
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.setContentText(rb.getString("userNotFound"));
+                    error.showAndWait();
                 }
             } else {
-                // Error message if user is not found in the db
+                // Username, password, or both are empty
                 Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setContentText(rb.getString("userNotFound"));
+                error.setContentText(rb.getString("invalidUserInput"));
                 error.showAndWait();
             }
-        } else {
-            // Username, password, or both are empty
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setContentText(rb.getString("invalidUserInput"));
-            error.showAndWait();
+
+            pw.close();
+            fw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
