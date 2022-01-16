@@ -99,7 +99,25 @@ public class MenuController implements Initializable {
         }
     }
 
+    /**
+     * Opens the reports screen
+     * @param actionEvent The reports button clicked
+     */
     public void onReportsClick(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ReportForm.fxml"));
+            loader.setResources(rb);
+
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+            stage.setTitle(rb.getString("title"));
+            stage.show();
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
