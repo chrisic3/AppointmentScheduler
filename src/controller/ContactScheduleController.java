@@ -128,7 +128,7 @@ public class ContactScheduleController implements Initializable {
     /**
      * Display all appointments if selected
      */
-    public void contactAllButtonClicked(ActionEvent actionEvent) {
+    public void contactAllButtonClicked() {
         contactTable.setItems(AppointmentDAO.getAppointments());
     }
 
