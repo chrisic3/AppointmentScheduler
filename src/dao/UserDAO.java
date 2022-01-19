@@ -53,12 +53,14 @@ public class UserDAO {
             Query.makeSelectQuery(query, 2, usernameInput, passwordInput);
             ResultSet rs = Query.getResult();
 
-            rs.next();
+            if (rs.next()) {
+//                rs.next();
 
-            int id = rs.getInt("User_ID");
-            String username = rs.getString("User_Name");
-            String password = rs.getString("Password");
-            return new User(id, username, password);
+                int id = rs.getInt("User_ID");
+                String username = rs.getString("User_Name");
+                String password = rs.getString("Password");
+                return new User(id, username, password);
+            }
         } catch (SQLException e) {
             // Db error
             e.printStackTrace();
