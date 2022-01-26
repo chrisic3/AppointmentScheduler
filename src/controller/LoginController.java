@@ -1,6 +1,9 @@
 package controller;
 
+import dao.AppointmentDAO;
 import dao.UserDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.User;
 
 import java.io.FileNotFoundException;
@@ -45,6 +49,7 @@ public class LoginController implements Initializable {
     // Class variables
     private ResourceBundle rb;
     String filename = "login_activity.txt";
+    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
     /**
      * Initializes the language for the login screen and local variables
@@ -54,6 +59,7 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
+        this.appointments = AppointmentDAO.getAppointments();
 
         usernameLabel.setText(rb.getString("username"));
         passwordLabel.setText(rb.getString("password"));
@@ -65,7 +71,8 @@ public class LoginController implements Initializable {
     /**
      * Submits the supplied login credentials for verification,
      * loads menu screen if authenticated,
-     * provides error message if invalid input
+     * provides error message if invalid input.
+     * Alerts user about upcoming appointments if successful.
      * @param actionEvent Login button clicked
      */
     public void onLoginClick(ActionEvent actionEvent) {
@@ -102,6 +109,9 @@ public class LoginController implements Initializable {
                         stage.setTitle(rb.getString("title"));
                         stage.show();
                         stage.centerOnScreen();
+
+                        // Check for and alert user of appointments within 15 minutes
+                        reminder(appointments);
                     } catch (IOException e) {
                         // If the fxml file is not found
                         e.printStackTrace();
@@ -131,5 +141,34 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * Loops through the list of appointments and alerts the user if they have one within 15 minutes from their
+     * system date/time. Otherwise, it tells them they do not have any.
+     * @param appts The list of appointments
+     */
+    public void reminder(ObservableList<Appointment> appts) {
+        boolean hasAppt = false;
 
+        // Convert local time to UTC to compare
+        LocalDateTime systemTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+
+        for (Appointment appt : appts) {
+            // Convert local time to UTC to compare
+            LocalDateTime apptStart = appt.getStart().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+
+            if ((systemTime.isAfter(apptStart.minusMinutes(15))) && (systemTime.isBefore(apptStart))) {
+                hasAppt = true;
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText(rb.getString("upcoming") + appt.getId() + ", " + appt.getStart().toLocalDate() + ", " + appt.getStart().toLocalTime());
+                alert.showAndWait();
+            }
+        }
+
+        if (!hasAppt) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(rb.getString("noUpcoming"));
+            alert.showAndWait();
+        }
+    }
 }

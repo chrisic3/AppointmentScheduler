@@ -51,10 +51,6 @@ public class MenuController implements Initializable {
         customersMenuButton.setText(rb.getString("customers"));
         appointmentsMenuButton.setText(rb.getString("appointments"));
         reportMenuButton.setText(rb.getString("reports"));
-
-
-        // Check for and alert user of appointments within 15 minutes
-        reminder(appointments);
     }
 
     /**
@@ -117,37 +113,6 @@ public class MenuController implements Initializable {
             stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Loops through the list of appointments and alerts the user if they have one within 15 minutes from their
-     * system date/time. Otherwise, it tells them they do not have any.
-     * @param appts The list of appointments
-     */
-    public void reminder(ObservableList<Appointment> appts) {
-        boolean hasAppt = false;
-
-        // Convert local time to UTC to compare
-        LocalDateTime systemTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-
-        for (Appointment appt : appts) {
-            // Convert local time to UTC to compare
-            LocalDateTime apptStart = appt.getStart().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-
-            if ((systemTime.isAfter(apptStart.minusMinutes(15))) && (systemTime.isBefore(apptStart))) {
-                hasAppt = true;
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText(rb.getString("upcoming") + appt.getId() + ", " + appt.getStart().toLocalDate() + ", " + appt.getStart().toLocalTime());
-                alert.showAndWait();
-            }
-        }
-
-        if (!hasAppt) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText(rb.getString("noUpcoming"));
-            alert.showAndWait();
         }
     }
 }
