@@ -24,6 +24,8 @@ import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controls the Appointments form
@@ -384,22 +386,16 @@ public class AppointmentController implements Initializable {
 
     /**
      * Display appointments for current month if selected.
-     * A lambda is used here for a simple loop through the list of appointments in order to
-     * add each one that matches the current month to the new list to display.
+     * A lambda is used here with a stream of appointments to filter by current month and send
+     * matching appointments to a new observablelist to display.
      */
     public void onApptMonthRadio() {
         // Get current month
         Month currentMonth = LocalDate.now().getMonth();
 
         ObservableList<Appointment> appts = AppointmentDAO.getAppointments();
-        ObservableList<Appointment> curAppts = FXCollections.observableArrayList();
-
-        // Lambda to loop through and add matching one to new list
-        appts.forEach(appt -> {
-            if (appt.getStart().getMonth().equals(currentMonth)) {
-                curAppts.add(appt);
-            }
-        });
+        ObservableList<Appointment> curAppts = appts.stream().filter(x -> x.getStart().getMonth()
+                .equals(currentMonth)).collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         apptTable.setItems(curAppts);
     }
