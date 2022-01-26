@@ -32,8 +32,6 @@ public class LoginController implements Initializable {
     @FXML
     private Label passwordLabel;
     @FXML
-    private Label localeIDLabel;
-    @FXML
     private Label zoneIDLabel;
     @FXML
     private Label currentLabel;
@@ -60,8 +58,7 @@ public class LoginController implements Initializable {
         usernameLabel.setText(rb.getString("username"));
         passwordLabel.setText(rb.getString("password"));
         loginButton.setText(rb.getString("login"));
-        currentLabel.setText(rb.getString("currentLocale"));
-        localeIDLabel.setText(String.valueOf(Locale.getDefault()));
+        currentLabel.setText(rb.getString("currentZone"));
         zoneIDLabel.setText(String.valueOf(ZoneId.systemDefault()));
     }
 
