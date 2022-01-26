@@ -18,7 +18,7 @@ public class Main extends Application {
      * @param args Cmd line arguments
      */
     public static void main(String[] args) {
-        Locale.setDefault(new Locale("fr", "FR"));
+        //Locale.setDefault(new Locale("fr", "FR"));
         //Locale.setDefault(new Locale("gb", "GB"));
         DBConnection.openConnection();
         launch(args);

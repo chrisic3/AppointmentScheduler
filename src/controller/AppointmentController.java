@@ -228,32 +228,20 @@ public class AppointmentController implements Initializable {
             // If no overlap then add, else do nothing
             if (!hasOverlap(appointment)) {
                 AppointmentDAO.addAppointment(appointment);
+                clearApptClicked();
             }
         } else {
             // Update selected appointment
             Appointment appointment = new Appointment(Integer.parseInt(id), title, description, location, contact, type, start, end, customer, user);
             // If no overlap then add, else do nothing
             if (!hasOverlap(appointment)) {
-                AppointmentDAO.addAppointment(appointment);
+                AppointmentDAO.updateAppointment(appointment);
+                clearApptClicked();
             }
         }
 
         // Update table to reflect changes
         refreshTable();
-
-        // Clear all fields/boxes
-        apptIdField.clear();
-        apptTitleField.clear();
-        apptDescField.clear();
-        apptLocationField.clear();
-        apptStartDate.setValue(null);
-        apptEndDate.setValue(null);
-        apptContactCombo.setValue(null);
-        apptTypeCombo.setValue(null);
-        apptStartTimeCombo.setValue(null);
-        apptEndTimeCombo.setValue(null);
-        apptCustomerCombo.setValue(null);
-        apptUserCombo.setValue(null);
     }
 
     /**
@@ -467,7 +455,7 @@ public class AppointmentController implements Initializable {
             LocalDateTime curEnd = appt.getEnd();
 
             // Don't check against the same appointment or any with different customers
-            if ((appt.getId() != newAppt.getId()) && (appt.getCustomer().equals(newAppt.getCustomer()))) {
+            if ((appt.getId() != newAppt.getId()) && (appt.getCustomer().getId() == newAppt.getCustomer().getId())) {
                 if (((newStart.isAfter(curStart)) || (newStart.equals(curStart))) &&
                         (newStart.isBefore(curEnd))) {
                     // New appointment starts during the existing one

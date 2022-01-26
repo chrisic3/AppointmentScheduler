@@ -68,7 +68,7 @@ public class AppointmentDAO {
 
         try {
             rs.next();
-            appointment.setId(rs.getInt(0));
+            appointment.setId(rs.getInt(1));
         } catch (SQLException e) {
             e.printStackTrace();
         }

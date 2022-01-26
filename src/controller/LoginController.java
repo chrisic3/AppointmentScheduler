@@ -42,7 +42,6 @@ public class LoginController implements Initializable {
 
     // Class variables
     private ResourceBundle rb;
-    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
 
     /**
      * Initializes the language for the login screen and local variables
@@ -52,7 +51,6 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.rb = resourceBundle;
-        this.appointments = AppointmentDAO.getAppointments();
 
         usernameLabel.setText(rb.getString("username"));
         passwordLabel.setText(rb.getString("password"));
