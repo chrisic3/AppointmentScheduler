@@ -122,10 +122,12 @@ public class MenuController implements Initializable {
 
     /**
      * Loops through the list of appointments and alerts the user if they have one within 15 minutes from their
-     * system date/time.
+     * system date/time. Otherwise, it tells them they do not have any.
      * @param appts The list of appointments
      */
     public void reminder(ObservableList<Appointment> appts) {
+        boolean hasAppt = false;
+
         // Convert local time to UTC to compare
         LocalDateTime systemTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
 
@@ -134,10 +136,18 @@ public class MenuController implements Initializable {
             LocalDateTime apptStart = appt.getStart().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
 
             if ((systemTime.isAfter(apptStart.minusMinutes(15))) && (systemTime.isBefore(apptStart))) {
+                hasAppt = true;
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText(rb.getString("upcoming") + appt.getId() + ", " + appt.getStart().toLocalDate() + ", " + appt.getStart().toLocalTime());
                 alert.showAndWait();
             }
+        }
+
+        if (!hasAppt) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText(rb.getString("noUpcoming"));
+            alert.showAndWait();
         }
     }
 }

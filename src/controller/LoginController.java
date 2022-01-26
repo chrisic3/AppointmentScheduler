@@ -1,9 +1,6 @@
 package controller;
 
-import dao.AppointmentDAO;
 import dao.UserDAO;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import model.Appointment;
 import model.User;
 
 import java.io.FileNotFoundException;
@@ -20,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -36,6 +31,8 @@ public class LoginController implements Initializable {
     private Label usernameLabel;
     @FXML
     private Label passwordLabel;
+    @FXML
+    private Label localeIDLabel;
     @FXML
     private Label zoneIDLabel;
     @FXML
@@ -64,7 +61,8 @@ public class LoginController implements Initializable {
         passwordLabel.setText(rb.getString("password"));
         loginButton.setText(rb.getString("login"));
         currentLabel.setText(rb.getString("currentLocale"));
-        zoneIDLabel.setText(String.valueOf(Locale.getDefault()));
+        localeIDLabel.setText(String.valueOf(Locale.getDefault()));
+        zoneIDLabel.setText(String.valueOf(ZoneId.systemDefault()));
     }
 
     /**
